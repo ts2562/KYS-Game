@@ -4,19 +4,26 @@ using UnityEngine;
 
 public class PlayerScript : MonoBehaviour {
 
-	private float speed = 13.0f;
+	public float speed = 20.0f;
 	public Vector2 jumpHeight;
-	//public float bounciness = 2.0f;
 	public GameObject Life1;
-	//public bool colliding;
-	// Use this for initialization
 	public bool isFalling = false;
+
+	public GameObject SpeedPlat1;
+	public GameObject SpeedPlat2;
+	public GameObject SpeedPlat3;
 	
+	Vector3 startPos; 
 	void Start () {
+		startPos = new Vector3(transform.position.x,transform.position.y,0);
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		if(Input.GetKey(KeyCode.R)){
+			transform.position = startPos;
+		}
+
 		if(Input.GetKey(KeyCode.A)){
 			transform.position += Vector3.left * speed * Time.deltaTime;
 		}
@@ -30,11 +37,56 @@ public class PlayerScript : MonoBehaviour {
         isFalling = true;
    	    }
 	}
-
+/*
 	void OnCollisionEnter2D(){
 		isFalling = false;
 	}
-	
-	
+	*/
+	void OnCollisionEnter2D(Collision2D collide){
+		var normal = collide.contacts[0].normal;
+		if (normal.y > 0) { //if the bottom side hit something 
+			Debug.Log ("You Hit the floor");
+			isFalling = false;
+
+		}
+		/*
+		if(collide.gameObject.name == "SpeedPlat1"){
+			speed = 26.0f;
+			Debug.Log ("1");
+		}
+		if(collide.gameObject.name == "SpeedPlat2"){
+			speed = 26.0f;
+			Debug.Log ("2");
+		}
+		if(collide.gameObject.name == "SpeedPlat3"){
+			speed = 26.0f;
+			Debug.Log ("3");
+		}
+		else {
+			speed = 13.0f;
+		}
+*/
+	}
+
+/*
+	void OnTriggerEnter2D(Collider2D col){
+		if(col.gameObject.name == "SpeedPlat1"){
+			speed = 26.0f;
+			Debug.Log ("1");
+		}
+		if(col.gameObject.name == "SpeedPlat2"){
+			speed = 26.0f;
+			Debug.Log ("2");
+		}
+		if(col.gameObject.name == "SpeedPlat3"){
+			speed = 26.0f;
+			Debug.Log ("3");
+		}
+		else {
+			speed = 13.0f;
+		}
+
+	}
+	*/
      
 }

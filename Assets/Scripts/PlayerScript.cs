@@ -191,16 +191,17 @@ public class PlayerScript : MonoBehaviour {
 		}
 
 
-		if(_other.name == "CrushingREct")
+		if(_other.name == "Pounder")
 		{
 			Transform deadbody = GameScenesManager.GetLevelSceneRoot ().FindChild ("Deadbody");
 
-			if (deadbody.FindChild(deadbodyOB[1].name).childCount < level.maxDeadBodyNum[2]) 
+			if (deadbody.FindChild(deadbodyOB[2].name).childCount < level.maxDeadBodyNum[2]) 
 			{
 				GameObject new_go = Instantiate (deadbodyOB[2]) as GameObject;
 				new_go.name = deadbodyOB [2].name;
 				new_go.transform.parent = deadbody.FindChild(new_go.name);
-				new_go.transform.position = this.transform.position;
+				new_go.transform.position = new Vector3 (this.transform.position.x, 
+														 this.transform.position.y - this.GetComponent<SpriteRenderer> ().bounds.size.y * 0.5f, 0);
 				level.createdDeadBodyNum [2]++; 
 			}
 			else
@@ -219,7 +220,7 @@ public class PlayerScript : MonoBehaviour {
 		{
 			speedX = 15.0f;
 		}
-		else if(_other.name == "Deadbody_2")
+		else if(_other.name == "DeadBody_2")
 		{
 			speedX = 45.0f;
 		}

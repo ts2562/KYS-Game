@@ -35,7 +35,7 @@ public class PlayerScript : MonoBehaviour {
 
 	public void InitData() 
 	{
-		this.transform.GetComponent<BoxCollider2D> ().enabled = false;
+		this.GetComponent<BoxCollider2D> ().enabled = false;	//Avoid checking collision at the beginning of the game
 		deadbodyOB = new Object[deadbodyType];
 		for (int i = 0; i < deadbodyType; i++) 
 		{
@@ -49,7 +49,6 @@ public class PlayerScript : MonoBehaviour {
 
 	public void SetGameData()	
 	{
-		
 		canCreateDeadbody = true;
 		canMove = false;
 
@@ -167,11 +166,23 @@ public class PlayerScript : MonoBehaviour {
 			canMove = false;
 		}
 
-		if (_other.name == "Ice" && canCreateDeadbody) 
+		if (_other.transform.parent.name == "Ices" && canCreateDeadbody) 
 		{
 			Transform deadbody = GameScenesManager.GetLevelSceneRoot ().FindChild ("Deadbody");
 
-			if (deadbody.FindChild(deadbodyOB[1].name).childCount < level.maxDeadBodyNum[1]) 
+			if(deadbody.FindChild(deadbodyOB[1].name).FindChild(_other.name))
+			{
+				deadbody.FindChild (deadbodyOB [1].name).FindChild (_other.name).position = this.transform.position;
+			}
+			else
+			{
+				GameObject new_go = Instantiate (deadbodyOB[1]) as GameObject;
+				new_go.name = _other.transform.name;
+				new_go.transform.parent = deadbody.FindChild(deadbodyOB[1].name);
+				new_go.transform.position = this.transform.position;
+			}
+				
+			/*		if (deadbody.FindChild(deadbodyOB[1].name).childCount < level.maxDeadBodyNum[1]) 
 			{
 				GameObject new_go = Instantiate (deadbodyOB[1]) as GameObject;
 				new_go.name = deadbodyOB [1].name;
@@ -182,7 +193,7 @@ public class PlayerScript : MonoBehaviour {
 			else
 			{
 				deadbody.FindChild(deadbodyOB[1].name).GetChild (Random.Range(0, level.createdDeadBodyNum[1])).position = this.transform.position;
-			}
+			}*/
 
 			_other.GetComponent<AudioSource> ().Play ();
 			this.transform.position = startPos;
@@ -191,11 +202,24 @@ public class PlayerScript : MonoBehaviour {
 		}
 
 
-		if(_other.name == "Pounder")
+		if(_other.transform.parent.name == "Pounders" && canCreateDeadbody)
 		{
 			Transform deadbody = GameScenesManager.GetLevelSceneRoot ().FindChild ("Deadbody");
 
-			if (deadbody.FindChild(deadbodyOB[2].name).childCount < level.maxDeadBodyNum[2]) 
+			if(deadbody.FindChild(deadbodyOB[2].name).FindChild(_other.name))
+			{
+				deadbody.FindChild (deadbodyOB [2].name).FindChild (_other.name).position = this.transform.position;
+			}
+			else
+			{
+				GameObject new_go = Instantiate (deadbodyOB[2]) as GameObject;
+				new_go.name = _other.transform.name;
+				new_go.transform.parent = deadbody.FindChild(deadbodyOB[2].name);
+				new_go.transform.position = new Vector3 (this.transform.position.x, 
+					this.transform.position.y - this.GetComponent<SpriteRenderer> ().bounds.size.y * 0.5f, 0);
+			}
+
+/*			if (deadbody.FindChild(deadbodyOB[2].name).childCount < level.maxDeadBodyNum[2]) 
 			{
 				GameObject new_go = Instantiate (deadbodyOB[2]) as GameObject;
 				new_go.name = deadbodyOB [2].name;
@@ -208,7 +232,7 @@ public class PlayerScript : MonoBehaviour {
 			{
 				deadbody.FindChild(deadbodyOB[2].name).GetChild (Random.Range(0, level.createdDeadBodyNum[2])).position = this.transform.position;
 			}
-
+*/
 			_other.GetComponent<AudioSource> ().Play ();
 			this.transform.position = startPos;
 			canCreateDeadbody = false;
@@ -220,7 +244,7 @@ public class PlayerScript : MonoBehaviour {
 		{
 			speedX = 15.0f;
 		}
-		else if(_other.name == "DeadBody_2")
+		else if(_other.transform.parent.name == "DeadBody_2")
 		{
 			speedX = 45.0f;
 		}

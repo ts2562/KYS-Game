@@ -21,9 +21,11 @@ public class GameScenesManager : MonoBehaviour
 	{
 		if (playSceneNum > 2) 
 		{
-			SceneManager.UnloadSceneAsync (playSceneNum);
+			SceneManager.UnloadSceneAsync (playSceneNum - 1);
 		}
 		playSceneNum = 2;
+		SceneManager.LoadScene (playSceneNum, LoadSceneMode.Additive);	// when game starts, load level 1
+		playSceneNum++;
 	}
 
 	public static void LoadNewScene()
@@ -37,7 +39,7 @@ public class GameScenesManager : MonoBehaviour
 		}
 		else
 		{
-			SceneManager.LoadScene (1, LoadSceneMode.Additive);
+			SceneManager.LoadScene (2, LoadSceneMode.Additive);
 			GameManager.gameProgress = GameManager.GAMEPROGRESS.wait;
 		}
 
@@ -45,7 +47,13 @@ public class GameScenesManager : MonoBehaviour
 
 	public static Transform GetLevelSceneRoot()
 	{
-		GameObject[] newscene_root = SceneManager.GetSceneAt (SceneManager.sceneCount - 1).GetRootGameObjects ();
-		return newscene_root [0].transform;
+		if (GameManager.gameProgress == GameManager.GAMEPROGRESS.gaming) 
+		{
+			Debug.Log ("Gaming");
+			GameObject[] newscene_root = SceneManager.GetSceneAt (SceneManager.sceneCount - 1).GetRootGameObjects ();
+			return newscene_root [0].transform;
+		}
+	
+		return null;
 	}
 }

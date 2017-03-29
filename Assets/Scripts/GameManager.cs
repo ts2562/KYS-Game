@@ -36,6 +36,7 @@ public class GameManager : MonoBehaviour
 		else if(gameProgress == GAMEPROGRESS.reset)
 		{
 			gamePlay.SetData ();
+	//		GameScenesManager.ResetData ();
 			gameProgress = GAMEPROGRESS.gaming;
 		}
 		else if(gameProgress == GAMEPROGRESS.wait)

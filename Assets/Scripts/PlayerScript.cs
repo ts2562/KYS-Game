@@ -51,6 +51,7 @@ public class PlayerScript : MonoBehaviour {
 	{
 		canCreateDeadbody = true;
 		canMove = false;
+		speedX = 20;
 
 		camera.SetData ();
 
@@ -100,10 +101,13 @@ public class PlayerScript : MonoBehaviour {
 	{
 		yield return 0.2f;
 		Transform root = GameScenesManager.GetLevelSceneRoot ();
-		level = root.GetComponent<LevelManager> ();
-		startPos = level.playerStartPosition;
-		this.transform.position = startPos;
-		this.GetComponent<BoxCollider2D> ().enabled = true;
+		if (root != null) 
+		{
+			level = root.GetComponent<LevelManager> ();
+			startPos = level.playerStartPosition;
+			this.transform.position = startPos;
+			this.GetComponent<BoxCollider2D> ().enabled = true;
+		}
 		yield break;
 	}
 

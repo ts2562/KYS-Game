@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{946BAD13-2003-A2EB-98B9-BA2494C06E41}</ProjectGuid>
+    <ProjectGuid>{FD59D49F-F038-AE7F-0B66-61B48EC808B1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -39,44 +39,58 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\GoalScript2.cs" />
-     <Compile Include="Assets\GoalScript3.cs" />
-     <Compile Include="Assets\Ice2Script.cs" />
-     <Compile Include="Assets\IceScript.cs" />
-     <Compile Include="Assets\LifeScript.cs" />
-     <Compile Include="Assets\PoundScript.cs" />
-     <Compile Include="Assets\ScoreScript.cs" />
-     <Compile Include="Assets\SlowDownScript.cs" />
-     <Compile Include="Assets\SpeedPlatformScript.cs" />
-     <Compile Include="Assets\lvl1scripts\CamShakeSimple.cs" />
-     <Compile Include="Assets\lvl1scripts\GoalScript1.cs" />
-     <Compile Include="Assets\lvl1scripts\MusicScript.cs" />
-     <Compile Include="Assets\lvl1scripts\PlayerScript.cs" />
-     <Compile Include="Assets\lvl1scripts\SpikeScript.cs" />
+     <Compile Include="Assets\Scripts\CameraControl.cs" />
+     <Compile Include="Assets\Scripts\GameEnd.cs" />
+     <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GameScenesManager.cs" />
+     <Compile Include="Assets\Scripts\Gameplay.cs" />
+     <Compile Include="Assets\Scripts\IceController.cs" />
+     <Compile Include="Assets\Scripts\LevelManager.cs" />
+     <Compile Include="Assets\Scripts\Old\CamShakeSimple.cs" />
+     <Compile Include="Assets\Scripts\Old\GoalScript1.cs" />
+     <Compile Include="Assets\Scripts\Old\GoalScript2.cs" />
+     <Compile Include="Assets\Scripts\Old\GoalScript3.cs" />
+     <Compile Include="Assets\Scripts\Old\Ice2Script.cs" />
+     <Compile Include="Assets\Scripts\Old\IceScript.cs" />
+     <Compile Include="Assets\Scripts\Old\LifeScript.cs" />
+     <Compile Include="Assets\Scripts\Old\MusicScript.cs" />
+     <Compile Include="Assets\Scripts\Old\PoundScript.cs" />
+     <Compile Include="Assets\Scripts\Old\ScoreScript.cs" />
+     <Compile Include="Assets\Scripts\Old\SlowDownScript.cs" />
+     <Compile Include="Assets\Scripts\Old\SpeedPlatformScript.cs" />
+     <Compile Include="Assets\Scripts\Old\SpikeScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerScript.cs" />
+     <Compile Include="Assets\Scripts\PounderController.cs" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.PlaymodeTestsRunner">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/5.4.0f3/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

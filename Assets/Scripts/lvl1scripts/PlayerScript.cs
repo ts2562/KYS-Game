@@ -11,9 +11,15 @@ public class PlayerScript : MonoBehaviour {
 	public Vector3 startPos;
 	public int death = 0;
 
+
+	public GameObject[] spriteList;
+	private bool collide;
+	private IEnumerator waitForRestart;
+
 	 
 	void Start () {
 		startPos = new Vector3(transform.position.x,transform.position.y,0);
+		collide = false;
 	}
 	
 	// Update is called once per frame
@@ -44,6 +50,16 @@ public class PlayerScript : MonoBehaviour {
 		isFalling = false;
 	}
 	*/
+
+
+	private IEnumerator WaitForRestart()
+	{
+		yield return new WaitForSeconds(2f);
+		Debug.Log ("Wait");
+		this.transform.position = startPos;
+		yield break;
+	}
+
 	void OnCollisionEnter2D(Collision2D collide){
 		var normal = collide.contacts[0].normal;
 		if (normal.y > 0) { //if the bottom side hit something 
@@ -52,7 +68,27 @@ public class PlayerScript : MonoBehaviour {
 			collide.gameObject.GetComponent<Collider2D>().enabled = true;
 		
 		}
+
 	}
 
-     
+	void OnTriggerEnter2D(Collider2D col)
+	{
+		if(col.transform.parent.name == "Spikes")
+		{
+     		//Destroy(col.gameObject);
+     		//audio.Play();
+			//StartCoroutine (waitSeconds (2.0f));
+			if(!collide)
+			{															
+				this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
+				spriteList[death%4].transform.position = this.transform.position;
+				waitForRestart = WaitForRestart ();
+				StartCoroutine (waitForRestart);
+				collide = true;
+				death++;
+
+			}
+     		//Life1.transform.position = playerPos;
+     	}
+	}
 }

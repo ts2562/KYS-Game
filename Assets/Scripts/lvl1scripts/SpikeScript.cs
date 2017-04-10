@@ -29,11 +29,11 @@ public class SpikeScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D col){
-     	if(col.gameObject.name == "Player"){
+    /* 	if(col.gameObject.name == "Player"){
      		//Destroy(col.gameObject);
      		//audio.Play();
 			//StartCoroutine (waitSeconds (2.0f));
-			if(!collide){
+			if(!collide){															// this cannot check whether player's body has collided something because each script is an istance, they own their own collider. 
 			StartCoroutine(waitSeconds(2.0f));
 			Player.transform.position = playerScript.startPos;
 			Player.GetComponent<SpriteRenderer>().color = color;
@@ -44,6 +44,6 @@ public class SpikeScript : MonoBehaviour {
 
 			}
      		//Life1.transform.position = playerPos;
-     	}
+     	}*/
      }
 }

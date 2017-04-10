@@ -46,24 +46,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Scripts\LifeScript.cs" />
-     <Compile Include="Assets\Scripts\ScoreScript.cs" />
-     <Compile Include="Assets\Scripts\lvl1scripts\CamShakeSimple.cs" />
-     <Compile Include="Assets\Scripts\lvl1scripts\GoalScript1.cs" />
-     <Compile Include="Assets\Scripts\lvl1scripts\MusicScript.cs" />
-     <Compile Include="Assets\Scripts\lvl1scripts\PlayerScript.cs" />
-     <Compile Include="Assets\Scripts\lvl1scripts\SpikeScript.cs" />
-     <Compile Include="Assets\Scripts\lvl2scripts\GoalScript2.cs" />
-     <Compile Include="Assets\Scripts\lvl2scripts\HardReset.cs" />
-     <Compile Include="Assets\Scripts\lvl2scripts\Ice2Script.cs" />
-     <Compile Include="Assets\Scripts\lvl2scripts\IceScript.cs" />
-     <Compile Include="Assets\Scripts\lvl3scripts\GoalScript3.cs" />
-     <Compile Include="Assets\Scripts\lvl3scripts\PoundScript.cs" />
-     <Compile Include="Assets\Scripts\lvl3scripts\SlowDownScript.cs" />
-     <Compile Include="Assets\Scripts\lvl3scripts\SpeedPlatformScript.cs" />
-     <Compile Include="Assets\Scripts\lvl5scripts\Goal5.cs" />
-     <Compile Include="Assets\Scripts\lvl5scripts\LifeScript5.cs" />
-     <Compile Include="Assets\Scripts\lvl6scripts\Goal6.cs" />
+     <Compile Include="Assets\Scripts\HazardSequence.cs" />
+     <Compile Include="Assets\Scripts\MusicScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\LifeScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\ScoreScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\SpikeScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl1scripts\CamShakeSimple.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl1scripts\GoalScript1.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl2scripts\GoalScript2.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl2scripts\HardReset.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl2scripts\Ice2Script.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl2scripts\IceScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl3scripts\GoalScript3.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl3scripts\PoundScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl3scripts\SlowDownScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl3scripts\SpeedPlatformScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl5scripts\Goal5.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl5scripts\LifeScript5.cs" />
+     <Compile Include="Assets\Scripts\NotUse\lvl6scripts\Goal6.cs" />
+     <Compile Include="Assets\Scripts\PlayerScript.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

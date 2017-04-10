@@ -2,9 +2,15 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpikeScript : MonoBehaviour {
+/*
+this cannot check whether player's body has collided something because each script is an istance, they own their own collider. 
+*/
 
-	public GameObject Player;
+
+public class SpikeScript : MonoBehaviour 
+{
+
+/*	public GameObject Player;
 	public PlayerScript playerScript;
 	//public GameObject Life1;
 	public GameObject[] spriteList;
@@ -29,21 +35,21 @@ public class SpikeScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D col){
-    /* 	if(col.gameObject.name == "Player"){
+     	if(col.gameObject.name == "Player"){
      		//Destroy(col.gameObject);
      		//audio.Play();
 			//StartCoroutine (waitSeconds (2.0f));
-			if(!collide){															// this cannot check whether player's body has collided something because each script is an istance, they own their own collider. 
+			if(!collide){															
 			StartCoroutine(waitSeconds(2.0f));
 			Player.transform.position = playerScript.startPos;
 			Player.GetComponent<SpriteRenderer>().color = color;
 
-				collide = true;
+				collide = true;						// This can not work
 				spriteList[playerScript.death%4].transform.position = playerPos;
 				playerScript.death++;
 
 			}
      		//Life1.transform.position = playerPos;
-     	}*/
-     }
+     	}
+     }*/
 }

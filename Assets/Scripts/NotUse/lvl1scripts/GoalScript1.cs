@@ -15,9 +15,9 @@ public class GoalScript1 : MonoBehaviour {
 	}
 
 	void OnTriggerEnter2D(Collider2D col){
-     	if(col.gameObject.name == "Player"){
+  /*   	if(col.gameObject.name == "Player"){
      		Application.LoadLevel("Level2");
-     	}
+     	}*/
 
      }
 }

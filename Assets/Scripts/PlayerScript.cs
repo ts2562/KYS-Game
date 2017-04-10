@@ -39,6 +39,7 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		
 		//settings
 		if(Input.GetKey(KeyCode.R))
 		{
@@ -53,8 +54,10 @@ public class PlayerScript : MonoBehaviour
 		//Movement
 		if (canMove)
 		{
+			
 			if(Input.GetKey(KeyCode.A))
 			{
+				
 				if (transform.position.x > -150.0f)
 					transform.position += Vector3.left * speed * Time.deltaTime;
 				//Pushing
@@ -94,7 +97,17 @@ public class PlayerScript : MonoBehaviour
 
 	private IEnumerator WaitForRestart()
 	{
-		yield return new WaitForSeconds(2f);
+		float startRotation = transform.eulerAngles.z;
+		float endRotation = startRotation + 360.0f;
+		float t = 0.0f;
+		while ( t  < 1.0f )
+		{
+			t += Time.deltaTime;
+			float zRotation = Mathf.Lerp(startRotation, endRotation, t / 1.0f) % 360.0f;
+			transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, zRotation);
+			yield return null;
+		}
+		//yield return new WaitForSeconds(1.0f);
 //		Debug.Log ("Wait");
 		liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = false;
 		this.transform.position = startPos;
@@ -106,6 +119,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
+		
 		var normal =  collision.contacts[0].normal;
 		if (normal.y > 0) { //if the bottom side hit something 
 			//Debug.Log ("You Hit the floor");
@@ -129,13 +143,18 @@ public class PlayerScript : MonoBehaviour
 			//StartCoroutine (waitSeconds (2.0f));
 			if(!collideWithhazard)
 			{					
-				this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
+				
+				//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
+				liveList[death % 4].GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
 				liveList[death % 4].transform.position = this.transform.position;
 				liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
 				waitForRestart = WaitForRestart ();
 				StartCoroutine (waitForRestart);
 				collideWithhazard = true;
 				canMove = false;
+				if(death >= 4){
+					Application.LoadLevel(Application.loadedLevel);
+				}
 			}
      		//Life1.transform.position = playerPos;
      	}

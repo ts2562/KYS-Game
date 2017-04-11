@@ -23,6 +23,7 @@ public class PlayerScript : MonoBehaviour
 	public GameObject[] liveList;
 	public int death = 0;
 
+	public AudioSource audio;
 	//Coroutine
 	private IEnumerator waitForRestart;
 
@@ -155,6 +156,8 @@ public class PlayerScript : MonoBehaviour
 			var normal =  collision.contacts[0].normal;
 			if (normal.y < 0)
 			{ //if player's top side hits something 
+
+				audio.Play();
 				
 				collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
 				collision.transform.GetComponent<CrushingRect> ().fallingDistance -= this.transform.GetComponent<SpriteRenderer> ().bounds.size.y * 0.5f;
@@ -165,6 +168,8 @@ public class PlayerScript : MonoBehaviour
 
 		if (collision.transform.name == "IceBallBase") 
 		{
+			audio.Play();
+
 			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
 			Death (collision.gameObject);
 		}
@@ -183,7 +188,7 @@ public class PlayerScript : MonoBehaviour
 		if(col.transform.parent.name == "Spikes")
 		{
      		//Destroy(col.gameObject);
-     		//audio.Play();
+     		audio.Play();
 			//StartCoroutine (waitSeconds (2.0f));
 
 			Death (col.gameObject);

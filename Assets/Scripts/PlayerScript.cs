@@ -140,7 +140,7 @@ public class PlayerScript : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 
-		if (collision.transform.parent.name == "Platforms") 
+		if (collision.transform.parent.name != "IceBallBase") 
 		{
 			var normal =  collision.contacts[0].normal;
 			if (normal.y > 0) 

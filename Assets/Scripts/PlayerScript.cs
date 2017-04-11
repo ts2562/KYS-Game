@@ -12,7 +12,7 @@ public class PlayerScript : MonoBehaviour
 	public float speed = 40.0f;
 	public Vector2 jumpHeight;
 	public bool isFalling = false;
-	private bool collideWithhazard;
+	private bool collideWithHazard;
 	private bool canMove;	// after dying and before reset, the body cannot move
 
 	//Push Dead Bodies
@@ -30,7 +30,7 @@ public class PlayerScript : MonoBehaviour
 	void Start () 
 	{
 		startPos = new Vector3(transform.position.x,transform.position.y,0);
-		collideWithhazard = false;
+		collideWithHazard = false;
 		canMove = true;
 		canPush = false;
 		pushBodyGO = null;
@@ -111,26 +111,70 @@ public class PlayerScript : MonoBehaviour
 //		Debug.Log ("Wait");
 		liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = false;
 		this.transform.position = startPos;
-		collideWithhazard = false;
+		collideWithHazard = false;
 		canMove = true;
 		death++;
 		yield break;
 	}
 
+	private void Death(GameObject _go)			// No matter colliders which kinds of hazards, must call this function to creat a dead body
+	{
+		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
+		if(!collideWithHazard)
+		{					
+			liveList[death % 4].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
+			liveList[death % 4].transform.position = this.transform.position;
+			liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
+			waitForRestart = WaitForRestart ();
+			StartCoroutine (waitForRestart);
+			collideWithHazard = true;
+			canMove = false;
+			if(death >= 4){
+				Application.LoadLevel(Application.loadedLevel);
+			}
+		}
+	
+	}
+
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		
-		var normal =  collision.contacts[0].normal;
-		if (normal.y > 0) { //if the bottom side hit something 
-			//Debug.Log ("You Hit the floor");
-			isFalling = false;
-			collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+
+		if (collision.transform.parent.name == "Platforms") 
+		{
+			var normal =  collision.contacts[0].normal;
+			if (normal.y > 0) 
+			{ //if the bottom side hit something 
+				//Debug.Log ("You Hit the floor");
+				isFalling = false;
+				collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+			}
 		}
+
+		if (collision.transform.parent.name == "CrushingRects") 
+		{
+			var normal =  collision.contacts[0].normal;
+			if (normal.y < 0)
+			{ //if player's top side hits something 
+				
+				collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
+				collision.transform.GetComponent<CrushingRect> ().fallingDistance -= this.transform.GetComponent<SpriteRenderer> ().bounds.size.y * 0.5f;
+				collision.transform.GetComponent<CrushingRect> ().GoBack ();
+				Death (collision.gameObject);
+			}
+		}
+
+		if (collision.transform.name == "IceBallBase") 
+		{
+			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
+			Death (collision.gameObject);
+		}
+
 		if (collision.transform.parent.name == "Lives") 
 		{
 			canPush = true;
 			pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 		}
+
 
 	}
 
@@ -141,21 +185,9 @@ public class PlayerScript : MonoBehaviour
      		//Destroy(col.gameObject);
      		//audio.Play();
 			//StartCoroutine (waitSeconds (2.0f));
-			if(!collideWithhazard)
-			{					
-				
-				//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
-				liveList[death % 4].GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
-				liveList[death % 4].transform.position = this.transform.position;
-				liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
-				waitForRestart = WaitForRestart ();
-				StartCoroutine (waitForRestart);
-				collideWithhazard = true;
-				canMove = false;
-				if(death >= 4){
-					Application.LoadLevel(Application.loadedLevel);
-				}
-			}
+
+			Death (col.gameObject);
+		
      		//Life1.transform.position = playerPos;
      	}
 

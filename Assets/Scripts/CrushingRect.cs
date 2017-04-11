@@ -17,6 +17,7 @@ public class CrushingRect : MonoBehaviour
 	public void FallDown()
 	{
 		//DoTween, creates fall down and go back movement loop -- Fall
+		Debug.Log(fallingDistance);
 		this.transform.DOMove (new Vector3(this.transform.position.x, this.transform.position.y - fallingDistance, 0), 0.5f).SetEase(Ease.InExpo).OnComplete(GoBack);
 
 	}
@@ -29,8 +30,12 @@ public class CrushingRect : MonoBehaviour
 
 	public void PauseDoMove()
 	{
+		Debug.Log ("Pause");
 		DOTween.Pause (this.transform);
 	}
 
-
+	public void UpdateFallingDistance(float _y)
+	{
+		fallingDistance = spawnPos.y - _y;
+	}
 }

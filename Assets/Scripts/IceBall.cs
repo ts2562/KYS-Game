@@ -39,7 +39,6 @@ public class IceBall : MonoBehaviour
 
 	public void DestroyGO(GameObject _go)
 	{
-		Debug.Log ("dESTROY");
 		Destroy (_go);
 	}
 

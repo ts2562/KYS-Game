@@ -140,9 +140,9 @@ public class PlayerScript : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 
-		if (collision.transform.parent.name != "IceBallBase") 
+		if (collision.transform.tag == "Ground") 
 		{
-			var normal =  collision.contacts[0].normal;
+			var normal = collision.contacts[0].normal;
 			if (normal.y > 0) 
 			{ //if the bottom side hit something 
 				//Debug.Log ("You Hit the floor");
@@ -158,11 +158,10 @@ public class PlayerScript : MonoBehaviour
 			{ //if player's top side hits something 
 
 				audio.Play();
-				
 				collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
-				collision.transform.GetComponent<CrushingRect> ().fallingDistance -= this.transform.GetComponent<SpriteRenderer> ().bounds.size.y * 0.5f;
 				collision.transform.GetComponent<CrushingRect> ().GoBack ();
 				Death (collision.gameObject);
+				collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
 			}
 		}
 

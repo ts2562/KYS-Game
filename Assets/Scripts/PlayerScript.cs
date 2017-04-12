@@ -17,7 +17,8 @@ public class PlayerScript : MonoBehaviour
 
 	//Push Dead Bodies
 	private bool canPush;
-	private GameObject pushBodyGO;
+//	private GameObject pushBodyGO;
+	public List<GameObject> pushingList;
 
 	//Life and Death
 	public GameObject[] liveList;
@@ -27,6 +28,9 @@ public class PlayerScript : MonoBehaviour
 	//Coroutine
 	private IEnumerator waitForRestart;
 
+	//Pushing
+
+
 	//height correction
 	//private Vector3 correction;
 	 
@@ -35,8 +39,10 @@ public class PlayerScript : MonoBehaviour
 		startPos = new Vector3(transform.position.x,transform.position.y,0);
 		collideWithHazard = false;
 		canMove = true;
-		canPush = false;
-		pushBodyGO = null;
+//		canPush = false;
+//		pushBodyGO = null;
+
+		pushingList = new List<GameObject>();
 
 		//correction = new Vector3(0f,1.85f,0f);
 	}
@@ -56,6 +62,11 @@ public class PlayerScript : MonoBehaviour
 			SceneManager.LoadScene(SceneManager.sceneCount - 1);
 		}
 
+		//Add pushing bodies
+		if (canPush) 
+		{
+			CheckDeadBodyForPushing (pushingList[0]);
+		}
 		//Movement
 		if (canMove)
 		{
@@ -64,27 +75,38 @@ public class PlayerScript : MonoBehaviour
 			{
 				
 				if (transform.position.x > -150.0f)
-					transform.position += Vector3.left * speed * Time.deltaTime;
+					transform.position += Vector3.left * speed * 0.02f;
 				//Pushing
-				if (canPush && pushBodyGO != null) 
+				if (canPush) 
 				{
-					if (Mathf.Abs (pushBodyGO.transform.position.y - this.transform.position.y) < 1f &&
-					   pushBodyGO.transform.position.x < this.transform.position.x) 
+					if (this.transform.position.x >= pushingList [0].transform.position.x) 
 					{
-						pushBodyGO.transform.position += Vector3.left * speed * Time.deltaTime;
+						for (int i = 0; i < pushingList.Count; i++) 
+						{
+						//	pushingList[i].transform.position = new Vector3(this.transform.position.x - (i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+						//		pushingList[i].transform.position.y, 0);
+							pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(1, 0);
+						}
 					}
+				
 				}
 			}
 			if(Input.GetKey(KeyCode.D))
 			{
 				if (transform.position.x < 150.0f)
-					transform.position += Vector3.right * speed * Time.deltaTime;
-				if (canPush && pushBodyGO != null) 
+					transform.position += Vector3.right * speed * 0.02f;
+				
+				if (canPush) 
 				{
-					if (Mathf.Abs (pushBodyGO.transform.position.y - this.transform.position.y) < 1f &&
-						pushBodyGO.transform.position.x > this.transform.position.x) 
+					if (this.transform.position.x <= pushingList [0].transform.position.x) 
 					{
-						pushBodyGO.transform.position += Vector3.right * speed * Time.deltaTime;
+						Debug.Log (pushingList.Count);
+						for (int i = 0; i < pushingList.Count; i++) 
+						{
+					//		pushingList[i].transform.position = new Vector3(this.transform.position.x +  (i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+					//			pushingList[i].transform.position.y, 0);
+								pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(1, 0);
+						}
 					}
 				}
 			}
@@ -98,6 +120,25 @@ public class PlayerScript : MonoBehaviour
 
 
 
+	}
+
+	private void CheckDeadBodyForPushing(GameObject _pushgo)
+	{
+//		Debug.Log (_pushgo);
+		for (int i = 0; i < death; i++) 
+		{
+			if (!pushingList.Contains (liveList [i])) 
+			{
+				if(Mathf.Abs(_pushgo.transform.position.x - liveList[i].transform.position.x) < 
+									_pushgo.GetComponent<SpriteRenderer>().bounds.size.x + 0.01f &&
+					Mathf.Abs(_pushgo.transform.position.y - liveList[i].transform.position.y) < 
+					_pushgo.GetComponent<SpriteRenderer>().bounds.size.y - 0.01f)
+				{
+					pushingList.Add (liveList[i]);
+					CheckDeadBodyForPushing (liveList[i]);
+				}
+			}
+		}
 	}
 
 	private IEnumerator WaitForRestart()
@@ -134,7 +175,7 @@ public class PlayerScript : MonoBehaviour
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;
 			canMove = false;
-			if(death >= 4){
+			if(death >= liveList.Length){
 				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
@@ -179,11 +220,14 @@ public class PlayerScript : MonoBehaviour
 
 		if (collision.transform.parent.name == "Lives") 
 		{
-			canPush = true;
-			pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
+			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y) 
+			{
+				canPush = true;
+				pushingList.Add(collision.gameObject);
+				CheckDeadBodyForPushing (pushingList[0]);
+			}
+			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 		}
-
-
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
@@ -211,7 +255,12 @@ public class PlayerScript : MonoBehaviour
 		if (collision.transform.parent.name == "Lives") 
 		{
 			canPush = false;
-			pushBodyGO = null;
+			for (int i = 0; i < pushingList.Count; i++) 
+			{
+				pushingList [i].GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+			}
+//			pushBodyGO = null;
+			pushingList.Clear();	
 		}
 
 	}

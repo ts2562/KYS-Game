@@ -6,24 +6,24 @@ using DG.Tweening;
 //The Gameobject owns this script will be an ice ball spawn base. It will create ice ball by following config data
 public class IceBall : MonoBehaviour 
 {
-	public float creatBallTime;		//time gap between creates two balls
+	public float createBallTime;		//time gap between creates two balls
 
 	public Vector2 moveingDistance;	// Default ice ball's move distance, can be changed when it spawn
 	public float moveTime;			// Default ice ball's move time, can be changed when it spawn
 
 	private Object iceBallOB;
-	private float creatBallTimer;
+	private float createBallTimer;
 	// Use this for initialization
 	void Start () 
 	{
-		creatBallTimer = 0;
+		createBallTimer = createBallTime;
 		iceBallOB = Resources.Load ("Prefabs/IceBall");
 	}
 
 	void Update()
 	{
-		creatBallTimer += Time.deltaTime;
-		if (creatBallTimer > creatBallTime) 
+		createBallTimer += Time.deltaTime;
+		if (createBallTimer > createBallTime) 
 		{
 			GameObject new_go = Instantiate (iceBallOB) as GameObject;
 			new_go.transform.parent = this.transform;
@@ -33,7 +33,7 @@ public class IceBall : MonoBehaviour
 									new_go.transform.position.y + moveingDistance.y, 0), moveTime)
 									.SetEase(Ease.Linear)
 									.OnComplete(()=>DestroyGO(new_go));
-			creatBallTimer = 0;
+			createBallTimer = 0;
 		}
 	}
 
@@ -52,8 +52,8 @@ public class IceBall : MonoBehaviour
 		if (_col.transform.parent != null) 
 		{ 
 			// when the ice ball collide with a dead body or a platform, destroy this ice ball
-			if (_col.transform.parent.name == "Lives" || _col.transform.parent.name == "Platforms")
-			{
+		//	if (_col.transform.parent.name == "Lives" || _col.transform.parent.name == "Platforms")
+		//	{
 				for (int i = 0; i < this.transform.childCount; i++) 
 				{
 					if (this.transform.GetChild (i) != null && this.transform.GetChild (i).GetComponent<CircleCollider2D> ().IsTouching(_col.collider)) 
@@ -66,7 +66,7 @@ public class IceBall : MonoBehaviour
 						go.GetComponent<SpriteRenderer>().DOFade (0, 0.3f).SetEase(Ease.InQuad).OnComplete(()=>DestroyGO(go));
 					}
 				}
-			}
+		//	}
 
 		}
 	}

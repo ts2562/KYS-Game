@@ -22,6 +22,7 @@ public class PlayerScript : MonoBehaviour
 
 	//Life and Death
 	public GameObject[] liveList;
+	public Transform lifeTr;
 	public int death = 0;
 
 	public AudioSource audio;
@@ -58,7 +59,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		if(Input.GetKey(KeyCode.Escape))
 		{
-			Application.LoadLevel(Application.loadedLevel);	// Unity now uses SceneManager instead of Application to manage scenes
+	//		Application.LoadLevel(Application.loadedLevel);	// Unity now uses SceneManager instead of Application to manage scenes
 			SceneManager.LoadScene(SceneManager.sceneCount - 1);
 		}
 
@@ -74,7 +75,7 @@ public class PlayerScript : MonoBehaviour
 			if(Input.GetKey(KeyCode.A))
 			{
 				
-				if (transform.position.x > -150.0f)
+			//	if (transform.position.x > -150.0f)
 					transform.position += Vector3.left * speed * 0.02f;
 				//Pushing
 				if (canPush) 
@@ -83,9 +84,9 @@ public class PlayerScript : MonoBehaviour
 					{
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-						//	pushingList[i].transform.position = new Vector3(this.transform.position.x - (i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-						//		pushingList[i].transform.position.y, 0);
-							pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(1, 0);
+							pushingList[i].transform.position = new Vector3(this.transform.position.x - (i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+							pushingList[i].transform.position.y, 0);
+						//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
 						}
 					}
 				
@@ -93,7 +94,7 @@ public class PlayerScript : MonoBehaviour
 			}
 			if(Input.GetKey(KeyCode.D))
 			{
-				if (transform.position.x < 150.0f)
+			//	if (transform.position.x < 150.0f)
 					transform.position += Vector3.right * speed * 0.02f;
 				
 				if (canPush) 
@@ -103,9 +104,9 @@ public class PlayerScript : MonoBehaviour
 						Debug.Log (pushingList.Count);
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-					//		pushingList[i].transform.position = new Vector3(this.transform.position.x +  (i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-					//			pushingList[i].transform.position.y, 0);
-								pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(1, 0);
+							pushingList[i].transform.position = new Vector3(this.transform.position.x +  (i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+								pushingList[i].transform.position.y, 0);
+						//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
 						}
 					}
 				}
@@ -118,7 +119,7 @@ public class PlayerScript : MonoBehaviour
 			}
 		}
 
-
+		Camera.main.transform.position = new Vector3 (this.transform.position.x, this.transform.position.y, -10);
 
 	}
 
@@ -155,6 +156,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		//yield return new WaitForSeconds(1.0f);
 //		Debug.Log ("Wait");
+		liveList [death % 4].GetComponent<BoxCollider2D> ().enabled = true;
 		liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = false;
 		this.transform.position = startPos;
 		collideWithHazard = false;
@@ -170,12 +172,14 @@ public class PlayerScript : MonoBehaviour
 		{					
 			liveList[death % 4].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
 			liveList[death % 4].transform.position = this.transform.position;
-			liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
+			liveList[death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
+			liveList [death % 4].transform.parent = lifeTr;
 			waitForRestart = WaitForRestart ();
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;
 			canMove = false;
-			if(death >= liveList.Length){
+			if(death >= liveList.Length * 3)
+			{
 				Application.LoadLevel(Application.loadedLevel);
 			}
 		}
@@ -215,14 +219,16 @@ public class PlayerScript : MonoBehaviour
 			audio.Play();
 
 			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
-			Death (collision.gameObject);
+			Death (collision.transform.GetChild(0).gameObject);
 		}
 
 		if (collision.transform.parent.name == "Lives") 
 		{
-			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y) 
+			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
 			{
+				
 				canPush = true;
+				Debug.Log (canPush);
 				pushingList.Add(collision.gameObject);
 				CheckDeadBodyForPushing (pushingList[0]);
 			}
@@ -255,10 +261,10 @@ public class PlayerScript : MonoBehaviour
 		if (collision.transform.parent.name == "Lives") 
 		{
 			canPush = false;
-			for (int i = 0; i < pushingList.Count; i++) 
+/*			for (int i = 0; i < pushingList.Count; i++) 
 			{
 				pushingList [i].GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-			}
+			}*/
 //			pushBodyGO = null;
 			pushingList.Clear();	
 		}

@@ -18,14 +18,14 @@ public class CrushingRect : MonoBehaviour
 	{
 		//DoTween, creates fall down and go back movement loop -- Fall
 //		Debug.Log(fallingDistance);
-		this.transform.DOMove (new Vector3(this.transform.position.x, this.transform.position.y - fallingDistance, 0), 0.5f).SetEase(Ease.InExpo).OnComplete(GoBack);
+		this.transform.DOMove (new Vector3(this.transform.position.x, this.transform.position.y - fallingDistance, 0), 0.6f).SetEase(Ease.InExpo).OnComplete(GoBack);
 
 	}
 
 	public void GoBack()
 	{
 		//DoTween, creates fall down and go back movement loop -- Back
-		this.transform.DOMove (spawnPos, 0.8f).SetEase(Ease.Linear).OnComplete(FallDown);
+		this.transform.DOMove (spawnPos, 1f).SetEase(Ease.Linear).OnComplete(FallDown);
 	}
 
 	public void PauseDoMove()

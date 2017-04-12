@@ -37,13 +37,14 @@ public class PlayerScript : MonoBehaviour
 
 	//Pushing
 
-
+	private bool cameraFollow;
 	//height correction
 	//private Vector3 correction;
 	 
 	void Start () 
 	{
 		startPos = new Vector3(transform.position.x,transform.position.y,0);
+		cameraFollow = true;
 		crush = GameObject.Find("CrushingRect");
 		collideWithHazard = false;
 		canMove = true;
@@ -130,16 +131,24 @@ public class PlayerScript : MonoBehaviour
 			}
 		}
 		float camX, camY;
-
+		camX = this.transform.position.x;
 		camY = this.transform.position.y;
-		if(camY < -4.5f){
-			camY = -20.5f;
+	
+		if(camY < -15f){
+			camY = -15f;
 		}
-		if (camY > 4.0f) {
-			camY = 4.0f;
+		if (camY > 8.0f) {
+			camY = 8.0f;
+		}
+		if (camX > 2){
+			camX = 2;
+		}
+		if(camX < 2){
+			camX = 2;
 		}
 		Debug.Log(camY);
-		Camera.main.transform.position = new Vector3 (this.transform.position.x, camY, -10);
+		if(cameraFollow)
+			Camera.main.transform.position = new Vector3 (camX, camY, -10);
 
 	}
 
@@ -164,6 +173,8 @@ public class PlayerScript : MonoBehaviour
 
 	private IEnumerator WaitForRestart()
 	{
+		this.GetComponent<Collider2D>().isTrigger = true;
+		cameraFollow = false;
 		float startRotation = transform.eulerAngles.z;
 		float endRotation = startRotation + 360.0f;
 		float t = 0.0f;
@@ -176,12 +187,15 @@ public class PlayerScript : MonoBehaviour
 		}
 		//yield return new WaitForSeconds(1.0f);
 //		Debug.Log ("Wait");
-		liveList [death % 4].GetComponent<BoxCollider2D> ().enabled = true;
-		liveList [death % 4].GetComponent<BoxCollider2D> ().isTrigger = false;
+		liveList [death % 6].GetComponent<BoxCollider2D> ().enabled = true;
+		liveList [death % 6].GetComponent<BoxCollider2D> ().isTrigger = false;
 		this.transform.position = startPos;
 		collideWithHazard = false;
 		canMove = true;
 		death++;
+		this.GetComponent<Collider2D>().isTrigger = false;
+		pushingList.Clear();
+		cameraFollow = true;
 		yield break;
 	}
 
@@ -234,10 +248,10 @@ public class PlayerScript : MonoBehaviour
 		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
 		if(!collideWithHazard)
 		{					
-			liveList[death % 4].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
-			liveList[death % 4].transform.position = this.transform.position;
-			liveList[death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
-			liveList[death % 4].transform.parent = lifeTr;
+			liveList[death % 6].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
+			liveList[death % 6].transform.position = this.transform.position;
+			liveList[death % 6].GetComponent<BoxCollider2D> ().isTrigger = true;
+			liveList[death % 6].transform.parent = lifeTr;
 			waitForRestart = WaitForRestart ();
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;

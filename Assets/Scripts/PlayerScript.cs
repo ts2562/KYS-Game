@@ -27,6 +27,8 @@ public class PlayerScript : MonoBehaviour
 	//Coroutine
 	private IEnumerator waitForRestart;
 
+	//height correction
+	//private Vector3 correction;
 	 
 	void Start () 
 	{
@@ -35,6 +37,8 @@ public class PlayerScript : MonoBehaviour
 		canMove = true;
 		canPush = false;
 		pushBodyGO = null;
+
+		//correction = new Vector3(0f,1.85f,0f);
 	}
 	
 	// Update is called once per frame

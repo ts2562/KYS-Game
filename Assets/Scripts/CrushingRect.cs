@@ -5,12 +5,15 @@ using DG.Tweening;
 
 public class CrushingRect : MonoBehaviour 
 {
-	public float fallingDistance;
+	public float fallingDistance;		//default
 	private Vector3 spawnPos;
+
+	private float curfallingDistance;
 	// Use this for initialization
 	void Start () 
 	{
 		spawnPos = this.transform.position;
+		curfallingDistance = fallingDistance;
 		FallDown ();
 	}
 
@@ -18,7 +21,7 @@ public class CrushingRect : MonoBehaviour
 	{
 		//DoTween, creates fall down and go back movement loop -- Fall
 //		Debug.Log(fallingDistance);
-		this.transform.DOMove (new Vector3(this.transform.position.x, this.transform.position.y - fallingDistance, 0), 0.6f).SetEase(Ease.InExpo).OnComplete(GoBack);
+		this.transform.DOMove (new Vector3(this.transform.position.x, this.transform.position.y - curfallingDistance, 0), 0.6f).SetEase(Ease.InExpo).OnComplete(GoBack);
 
 	}
 
@@ -36,9 +39,11 @@ public class CrushingRect : MonoBehaviour
 
 	public void UpdateFallingDistance(float _y)
 	{
-		fallingDistance = spawnPos.y - _y;
+		curfallingDistance = spawnPos.y - _y;
 	}
-	public void setFallingDistance (float _y){
-		fallingDistance = _y;
+
+	public void ResetFallingDistance ()
+	{
+		curfallingDistance = fallingDistance;
 	}
 }

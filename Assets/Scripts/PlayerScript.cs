@@ -205,7 +205,7 @@ public class PlayerScript : MonoBehaviour
 		t = 0.0f;
 		death = 0;
 		this.transform.position = startPos;
-		crush.GetComponent<CrushingRect>().setFallingDistance(15.0f);
+		crush.GetComponent<CrushingRect>().ResetFallingDistance();
 		Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
 		for (int i = 0; i < liveList.Length; i++){
 			liveList[i].transform.position = startLife[i];

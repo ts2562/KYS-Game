@@ -38,4 +38,7 @@ public class CrushingRect : MonoBehaviour
 	{
 		fallingDistance = spawnPos.y - _y;
 	}
+	public void setFallingDistance (float _y){
+		fallingDistance = _y;
+	}
 }

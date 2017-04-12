@@ -20,14 +20,20 @@ public class PlayerScript : MonoBehaviour
 //	private GameObject pushBodyGO;
 	public List<GameObject> pushingList;
 
+
+	public GameObject fadeImage;
+
 	//Life and Death
 	public GameObject[] liveList;
+	private Vector3[] startLife;
 	public Transform lifeTr;
 	public int death = 0;
 
+	private GameObject crush;
 	public AudioSource audio;
 	//Coroutine
 	private IEnumerator waitForRestart;
+	private IEnumerator fadeOut;
 
 	//Pushing
 
@@ -38,14 +44,18 @@ public class PlayerScript : MonoBehaviour
 	void Start () 
 	{
 		startPos = new Vector3(transform.position.x,transform.position.y,0);
+		crush = GameObject.Find("CrushingRect");
 		collideWithHazard = false;
 		canMove = true;
 //		canPush = false;
 //		pushBodyGO = null;
-
 		pushingList = new List<GameObject>();
-
+		startLife = new Vector3[liveList.Length];
 		//correction = new Vector3(0f,1.85f,0f);
+		for (int i = 0; i < liveList.Length; i++){
+			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, liveList[i].transform.position.x);
+
+		}
 	}
 	
 	// Update is called once per frame
@@ -55,7 +65,8 @@ public class PlayerScript : MonoBehaviour
 		//settings
 		if(Input.GetKey(KeyCode.R))
 		{
-			transform.position = startPos;
+			fadeOut = FadeOut();
+			StartCoroutine(fadeOut);
 		}
 		if(Input.GetKey(KeyCode.Escape))
 		{
@@ -76,7 +87,7 @@ public class PlayerScript : MonoBehaviour
 			{
 				
 			//	if (transform.position.x > -150.0f)
-					transform.position += Vector3.left * speed * 0.02f;
+					transform.position += Vector3.left * speed * 0.03f;
 				//Pushing
 				if (canPush) 
 				{
@@ -95,13 +106,13 @@ public class PlayerScript : MonoBehaviour
 			if(Input.GetKey(KeyCode.D))
 			{
 			//	if (transform.position.x < 150.0f)
-					transform.position += Vector3.right * speed * 0.02f;
+					transform.position += Vector3.right * speed * 0.03f;
 				
 				if (canPush) 
 				{
 					if (this.transform.position.x <= pushingList [0].transform.position.x) 
 					{
-						Debug.Log (pushingList.Count);
+						//Debug.Log (pushingList.Count);
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
 							pushingList[i].transform.position = new Vector3(this.transform.position.x +  (i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
@@ -118,8 +129,17 @@ public class PlayerScript : MonoBehaviour
 				isFalling = true;
 			}
 		}
+		float camX, camY;
 
-		Camera.main.transform.position = new Vector3 (this.transform.position.x, this.transform.position.y, -10);
+		camY = this.transform.position.y;
+		if(camY < -4.5f){
+			camY = -20.5f;
+		}
+		if (camY > 4.0f) {
+			camY = 4.0f;
+		}
+		Debug.Log(camY);
+		Camera.main.transform.position = new Vector3 (this.transform.position.x, camY, -10);
 
 	}
 
@@ -165,6 +185,50 @@ public class PlayerScript : MonoBehaviour
 		yield break;
 	}
 
+	private IEnumerator FadeOut() {
+		float t = 0.0f;
+		float startAlpha = 0.0f;
+		float endAlpha = 1.0f;
+		while (t < 1.0f) {
+			t += Time.deltaTime;
+			/*
+			alpha -= fadeDir * fadeSpeed * Time.deltaTime;
+			alpha = Mathf.Clamp01(alpha);
+			*/
+			float alp = Mathf.Lerp(startAlpha, endAlpha, t/1.0f);
+			Color col = fadeImage.GetComponent<SpriteRenderer>().color;
+			col.a = alp;
+			fadeImage.GetComponent<SpriteRenderer>().color = col;
+
+			yield return null;
+		}
+		t = 0.0f;
+		death = 0;
+		this.transform.position = startPos;
+		crush.GetComponent<CrushingRect>().setFallingDistance(15.0f);
+		Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
+		for (int i = 0; i < liveList.Length; i++){
+			liveList[i].transform.position = startLife[i];
+			liveList[i].transform.parent = Camera.main.transform;
+			//Debug.Log(liveList[i].transform.position.x);
+		}
+		while (t < 1.0f) {
+			t += Time.deltaTime;
+			/*
+			alpha -= fadeDir * fadeSpeed * Time.deltaTime;
+			alpha = Mathf.Clamp01(alpha);
+			*/
+			float alp = Mathf.Lerp(endAlpha, startAlpha, t/1.0f);
+			Color col = fadeImage.GetComponent<SpriteRenderer>().color;
+			col.a = alp;
+			fadeImage.GetComponent<SpriteRenderer>().color = col;
+
+			yield return null;
+		}
+
+		yield break;
+	}
+
 	private void Death(GameObject _go)			// No matter colliders which kinds of hazards, must call this function to creat a dead body
 	{
 		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
@@ -173,14 +237,15 @@ public class PlayerScript : MonoBehaviour
 			liveList[death % 4].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
 			liveList[death % 4].transform.position = this.transform.position;
 			liveList[death % 4].GetComponent<BoxCollider2D> ().isTrigger = true;
-			liveList [death % 4].transform.parent = lifeTr;
+			liveList[death % 4].transform.parent = lifeTr;
 			waitForRestart = WaitForRestart ();
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;
 			canMove = false;
-			if(death >= liveList.Length * 3)
+			if(death >= liveList.Length)
 			{
-				Application.LoadLevel(Application.loadedLevel);
+				fadeOut = FadeOut();
+				StartCoroutine(fadeOut);
 			}
 		}
 	
@@ -205,7 +270,7 @@ public class PlayerScript : MonoBehaviour
 			var normal =  collision.contacts[0].normal;
 			if (normal.y < 0)
 			{ //if player's top side hits something 
-
+				
 				audio.Play();
 				collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
 				collision.transform.GetComponent<CrushingRect> ().GoBack ();
@@ -228,7 +293,7 @@ public class PlayerScript : MonoBehaviour
 			{
 				
 				canPush = true;
-				Debug.Log (canPush);
+				//Debug.Log (canPush);
 				pushingList.Add(collision.gameObject);
 				CheckDeadBodyForPushing (pushingList[0]);
 			}

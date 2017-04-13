@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GoalScript2 : MonoBehaviour {
 
@@ -15,7 +16,7 @@ public class GoalScript2 : MonoBehaviour {
 	}
 	void OnTriggerEnter2D(Collider2D col){
      	if(col.gameObject.name == "Player"){
-     		Application.LoadLevel("Level3");
+     		SceneManager.LoadScene("Level3",  LoadSceneMode.Single);
      	}
 
      }

@@ -33,18 +33,26 @@ public class IceBall : MonoBehaviour
 									new_go.transform.position.y + moveingDistance.y, 0), moveTime)
 									.SetEase(Ease.Linear)
 									.OnComplete(()=>DestroyGO(new_go));
+			
+			if (this.transform.tag == "GoalHazard") 
+			{
+				new_go.GetComponent<SpriteRenderer>().DOColor(new Color32 (255,255,255, 255), 1f).SetLoops(-1, LoopType.Yoyo);
+			}
 			createBallTimer = 0;
 		}
 	}
 
 	public void DestroyGO(GameObject _go)
 	{
+		PauseTween (_go.transform);
 		Destroy (_go);
 	}
 
 	public void PauseTween(Transform _tr)
 	{
 		DOTween.Pause (_tr);
+		DOTween.Pause(_tr.GetComponent<SpriteRenderer>());
+//		Debug.Log ("pause");
 	}
 
 	void OnCollisionEnter2D(Collision2D _col)
@@ -59,7 +67,6 @@ public class IceBall : MonoBehaviour
 					if (this.transform.GetChild (i) != null && this.transform.GetChild (i).GetComponent<CircleCollider2D> ().IsTouching(_col.collider)) 
 					{
 						GameObject go = this.transform.GetChild (i).gameObject;
-						
 						PauseTween (this.transform.GetChild(i));
 						go.GetComponent<CircleCollider2D> ().enabled = false;
 						go.transform.DOScale (this.transform.GetChild(i).localScale * 1.5f, 0.15f).SetEase(Ease.InQuad);

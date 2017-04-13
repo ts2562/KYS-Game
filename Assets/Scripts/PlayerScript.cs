@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using DG.Tweening;
 
 public class PlayerScript : MonoBehaviour 
 {
@@ -27,7 +28,10 @@ public class PlayerScript : MonoBehaviour
 	public GameObject[] liveList;
 	private Vector3[] startLife;
 	public Transform lifeTr;
+	public Transform deadBodiesTr;
 	public int death = 0;
+	private float direction;
+
 
 	private GameObject crush;
 	public AudioSource audio;
@@ -43,7 +47,7 @@ public class PlayerScript : MonoBehaviour
 	 
 	void Start () 
 	{
-		startPos = new Vector3(transform.position.x,transform.position.y,0);
+		startPos = new Vector3(transform.position.x, transform.position.y, 0);
 		cameraFollow = true;
 		crush = GameObject.Find("CrushingRect");
 		collideWithHazard = false;
@@ -53,10 +57,25 @@ public class PlayerScript : MonoBehaviour
 		pushingList = new List<GameObject>();
 		startLife = new Vector3[liveList.Length];
 		//correction = new Vector3(0f,1.85f,0f);
-		for (int i = 0; i < liveList.Length; i++){
-			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, liveList[i].transform.position.x);
+		for (int i = 0; i < liveList.Length; i++)
+		{
+		//	liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 0);
+			liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, this.transform.position.y, 0);
+//			Debug.Log (	liveList [i].transform.localPosition.y);
+
+			//	liveList [i].transform.localPosition = new Vector3(Mathf.Sin(i * 60 * Mathf.Deg2Rad) * 1.2f, Mathf.Cos(i * 60 * Mathf.Deg2Rad) * 1.2f, 0);
+			liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.3f)
+				.SetEase (Ease.InSine)
+				.SetLoops (-1, LoopType.Yoyo)
+				.SetDelay (Random.Range (0, 1f));
+		}
+
+		for (int i = 0; i < liveList.Length; i++)
+		{
+			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
 
 		}
+		direction = 1;
 	}
 	
 	// Update is called once per frame
@@ -80,12 +99,67 @@ public class PlayerScript : MonoBehaviour
 		{
 			CheckDeadBodyForPushing (pushingList[0]);
 		}
+
+		// Lives
+		for(int i = death; i < liveList.Length; i ++)
+		{
+
+			liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2 - death) * 3f * direction, liveList[i].transform.position.y, 0);
+			if (!collideWithHazard && !isFalling) 
+			{
+				if (!DOTween.IsTweening (liveList [i].transform, true)) 
+				{
+					DOTween.Play (liveList[i].transform);
+				}
+
+				if (i - death == 0) 
+				{
+					if(Mathf.Abs (liveList [i].transform.position.x - this.transform.position.x) > 6.5f ||
+						Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y) > 3) 
+					{
+						DOTween.Pause (liveList[i].transform);
+						liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, 
+							this.transform.position.y, 0);
+							
+						liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.2f)
+							.SetEase (Ease.InSine)
+							.SetLoops (-1, LoopType.Yoyo)
+							.SetDelay(Random.Range(0, 1f)).SetDelay(Random.Range(0, 1));
+					}
+				}
+				else
+				{
+					if(Mathf.Abs (liveList [i].transform.position.x - liveList [i - 1].transform.position.x) > 4f ||
+						Mathf.Abs(liveList[i].transform.position.y -liveList [i - 1].transform.position.y) > 3) 
+					{
+						DOTween.Pause (liveList[i].transform);
+						liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, 
+							this.transform.position.y, 0);
+						
+						liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.2f).SetEase (Ease.InSine).SetLoops (-1, LoopType.Yoyo).SetDelay(Random.Range(0, 1f));
+					}
+					
+				}
+
+
+					
+			}
+			else
+			{
+				DOTween.Pause (liveList[i].transform);
+			}
+		}
+
+
+
+
 		//Movement
 		if (canMove)
 		{
-			
+
 			if(Input.GetKey(KeyCode.A))
 			{
+				direction = Mathf.Lerp(direction, 1, 0.02f);
 				
 			//	if (transform.position.x > -150.0f)
 					transform.position += Vector3.left * speed * 0.03f;
@@ -96,7 +170,8 @@ public class PlayerScript : MonoBehaviour
 					{
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-							pushingList[i].transform.position = new Vector3(this.transform.position.x - (i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+							pushingList[i].transform.position = new Vector3(this.transform.position.x -
+									(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
 							pushingList[i].transform.position.y, 0);
 						//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
 						}
@@ -106,6 +181,7 @@ public class PlayerScript : MonoBehaviour
 			}
 			if(Input.GetKey(KeyCode.D))
 			{
+				direction = Mathf.Lerp(direction, -1, 0.02f);
 			//	if (transform.position.x < 150.0f)
 					transform.position += Vector3.right * speed * 0.03f;
 				
@@ -146,7 +222,7 @@ public class PlayerScript : MonoBehaviour
 		if(camX < 2){
 			camX = 2;
 		}
-		Debug.Log(camY);
+//		Debug.Log(camY);
 		if(cameraFollow)
 			Camera.main.transform.position = new Vector3 (camX, camY, -10);
 
@@ -189,6 +265,7 @@ public class PlayerScript : MonoBehaviour
 //		Debug.Log ("Wait");
 		liveList [death % 6].GetComponent<BoxCollider2D> ().enabled = true;
 		liveList [death % 6].GetComponent<BoxCollider2D> ().isTrigger = false;
+	
 		this.transform.position = startPos;
 		collideWithHazard = false;
 		canMove = true;
@@ -196,6 +273,7 @@ public class PlayerScript : MonoBehaviour
 		this.GetComponent<Collider2D>().isTrigger = false;
 		pushingList.Clear();
 		cameraFollow = true;
+		direction = 1;
 		yield break;
 	}
 
@@ -219,11 +297,15 @@ public class PlayerScript : MonoBehaviour
 		t = 0.0f;
 		death = 0;
 		this.transform.position = startPos;
-		crush.GetComponent<CrushingRect>().ResetFallingDistance();
+//		crush.GetComponent<CrushingRect>().ResetFallingDistance();
 		Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
+		direction = 1;
 		for (int i = 0; i < liveList.Length; i++){
 			liveList[i].transform.position = startLife[i];
-			liveList[i].transform.parent = Camera.main.transform;
+			liveList[i].transform.parent = lifeTr;
+			liveList [i].transform.localScale = new Vector3 (1, 1, 1);
+			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+
 			//Debug.Log(liveList[i].transform.position.x);
 		}
 		while (t < 1.0f) {
@@ -249,9 +331,12 @@ public class PlayerScript : MonoBehaviour
 		if(!collideWithHazard)
 		{					
 			liveList[death % 6].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
+			liveList [death % 6].transform.localScale = this.transform.localScale;
+			liveList [death % 6].transform.parent = deadBodiesTr;
+			DOTween.Pause (liveList [death % 6].transform);
+			
 			liveList[death % 6].transform.position = this.transform.position;
 			liveList[death % 6].GetComponent<BoxCollider2D> ().isTrigger = true;
-			liveList[death % 6].transform.parent = lifeTr;
 			waitForRestart = WaitForRestart ();
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;
@@ -286,11 +371,11 @@ public class PlayerScript : MonoBehaviour
 			{ //if player's top side hits something 
 				
 				audio.Play();
-				collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
-				collision.transform.GetComponent<CrushingRect> ().GoBack ();
+			//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
+			//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
 				Death (collision.gameObject);
-				collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
-			}
+			//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
+			} 
 		}
 
 		if (collision.transform.name == "IceBallBase") 
@@ -301,7 +386,7 @@ public class PlayerScript : MonoBehaviour
 			Death (collision.transform.GetChild(0).gameObject);
 		}
 
-		if (collision.transform.parent.name == "Lives") 
+		if (collision.transform.parent.name == "DeadBodies") 
 		{
 			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
 			{
@@ -337,7 +422,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.transform.parent.name == "Lives") 
+		if (collision.transform.parent.name == "DeadBodies") 
 		{
 			canPush = false;
 /*			for (int i = 0; i < pushingList.Count; i++) 
@@ -346,6 +431,11 @@ public class PlayerScript : MonoBehaviour
 			}*/
 //			pushBodyGO = null;
 			pushingList.Clear();	
+		}
+
+		if(collision.transform.tag == "Ground")
+		{
+			isFalling = true;	
 		}
 
 	}

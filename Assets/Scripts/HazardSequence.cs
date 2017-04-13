@@ -15,10 +15,11 @@ public class HazardSequence : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		DOTween.Kill(1);
 		for (int i = 0; i < hazardTrList.Length; i++) 
 		{
-			hazardTrList[i].tag = "GoalHazard";	// when player collides something, check the tag
-			hazardTrList[i].GetComponent<SpriteRenderer>().DOColor(new Color32 (255,255,255, 255), 1f).SetLoops(-1, LoopType.Yoyo);
+			hazardTrList[i].tag = "GoalHazard";    // when player collides something, check the tag
+			hazardTrList[i].GetComponent<SpriteRenderer>().DOColor(new Color32 (255,255,255, 255), 1f).SetLoops(-1, LoopType.Yoyo).SetId(1);
 		}
 		
 	}

@@ -39,11 +39,16 @@ public class PlayerScript : MonoBehaviour
 	private IEnumerator waitForRestart;
 	private IEnumerator fadeOut;
 
+
 	//Pushing
+
+
+	public float MaxCamX, MinCamX, MaxCamY, MinCamY;
 
 	private bool cameraFollow;
 	//height correction
 	//private Vector3 correction;
+
 	 
 	void Start () 
 	{
@@ -97,7 +102,8 @@ public class PlayerScript : MonoBehaviour
 		//Add pushing bodies
 		if (canPush) 
 		{
-			CheckDeadBodyForPushing (pushingList[0]);
+			//if(pushingList[0])
+			//	CheckDeadBodyForPushing (pushingList[0]);
 		}
 
 		// Lives
@@ -210,17 +216,17 @@ public class PlayerScript : MonoBehaviour
 		camX = this.transform.position.x;
 		camY = this.transform.position.y;
 	
-		if(camY < -15f){
-			camY = -15f;
+		if(camY < MinCamY){
+			camY = MinCamY;
 		}
-		if (camY > 8.0f) {
-			camY = 8.0f;
+		if (camY > MaxCamY) {
+			camY = MaxCamY;
 		}
-		if (camX > 2){
-			camX = 2;
+		if (camX > MaxCamX){
+			camX = MaxCamX;
 		}
-		if(camX < 2){
-			camX = 2;
+		if(camX < MinCamY){
+			camX = MinCamY;
 		}
 //		Debug.Log(camY);
 		if(cameraFollow)

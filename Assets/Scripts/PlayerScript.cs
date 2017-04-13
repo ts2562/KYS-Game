@@ -298,7 +298,7 @@ public class PlayerScript : MonoBehaviour
 		death = 0;
 		this.transform.position = startPos;
 //		crush.GetComponent<CrushingRect>().ResetFallingDistance();
-		Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
+		//Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
 		direction = 1;
 		for (int i = 0; i < liveList.Length; i++){
 			liveList[i].transform.position = startLife[i];
@@ -363,7 +363,7 @@ public class PlayerScript : MonoBehaviour
 				collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}
 		}
-
+		
 		if (collision.transform.parent.name == "CrushingRects") 
 		{
 			var normal =  collision.contacts[0].normal;
@@ -378,7 +378,7 @@ public class PlayerScript : MonoBehaviour
 			} 
 		}
 
-		if (collision.transform.name == "IceBallBase") 
+		if (collision.transform.parent.name == "IceBallBases") 
 		{
 			audio.Play();
 
@@ -398,6 +398,8 @@ public class PlayerScript : MonoBehaviour
 			}
 			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 		}
+
+
 	}
 
 	void OnTriggerEnter2D(Collider2D col)

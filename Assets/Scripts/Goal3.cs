@@ -16,7 +16,7 @@ public class Goal3 : MonoBehaviour {
 
 	}
 
-	void OnCollisionEnter2D(Collider2D col){
+	void OnCollisionEnter2D(Collision2D col){
 		if(col.gameObject.name == "Player"){
 			//Application.LoadLevel("Level2");
 			SceneManager.LoadScene("Large_Level_1",  LoadSceneMode.Single);

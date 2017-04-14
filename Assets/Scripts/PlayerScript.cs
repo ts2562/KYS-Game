@@ -17,7 +17,7 @@ public class PlayerScript : MonoBehaviour
 	private bool canMove;	// after dying and before reset, the body cannot move
 
 	//Push Dead Bodies
-	private bool canPush;
+	public bool canPush;
 //	private GameObject pushBodyGO;
 	public List<GameObject> pushingList;
 
@@ -36,8 +36,8 @@ public class PlayerScript : MonoBehaviour
 	private GameObject crush;
 	public AudioSource audio;
 	//Coroutine
-	private IEnumerator waitForRestart;
-	private IEnumerator fadeOut;
+	private IEnumerator waitForRestart;	// no matter it is the first time of entering the level, or a restart of the level, must call this function to RESET data
+	private IEnumerator fadeOut;	// Only deal with the black mask
 
 
 	//Pushing
@@ -50,24 +50,21 @@ public class PlayerScript : MonoBehaviour
 	//private Vector3 correction;
 
 	 
-	void Start () 
+	void Start () // Init data that only need to init once per level
 	{
 		startPos = new Vector3(transform.position.x, transform.position.y, 0);
-		cameraFollow = true;
+
 		crush = GameObject.Find("CrushingRect");
-		collideWithHazard = false;
-		canMove = true;
-//		canPush = false;
-//		pushBodyGO = null;
+
 		pushingList = new List<GameObject>();
 		startLife = new Vector3[liveList.Length];
+
 		//correction = new Vector3(0f,1.85f,0f);
 		for (int i = 0; i < liveList.Length; i++)
 		{
 		//	liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 0);
 			liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, this.transform.position.y, 0);
 //			Debug.Log (	liveList [i].transform.localPosition.y);
-
 			//	liveList [i].transform.localPosition = new Vector3(Mathf.Sin(i * 60 * Mathf.Deg2Rad) * 1.2f, Mathf.Cos(i * 60 * Mathf.Deg2Rad) * 1.2f, 0);
 			liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.3f)
 				.SetEase (Ease.InSine)
@@ -80,9 +77,12 @@ public class PlayerScript : MonoBehaviour
 			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
 
 		}
-		direction = 1;
+
+		death = 0;
+
+		ResetData ();
 	}
-	
+
 	// Update is called once per frame
 	void Update () 
 	{
@@ -90,8 +90,7 @@ public class PlayerScript : MonoBehaviour
 		//settings
 		if(Input.GetKey(KeyCode.R))
 		{
-			fadeOut = FadeOut();
-			StartCoroutine(fadeOut);
+			RestartLevel ();	
 		}
 		if(Input.GetKey(KeyCode.Escape))
 		{
@@ -102,8 +101,7 @@ public class PlayerScript : MonoBehaviour
 		//Add pushing bodies
 		if (canPush) 
 		{
-			//if(pushingList[0])
-			//	CheckDeadBodyForPushing (pushingList[0]);
+			CheckDeadBodyForPushing (pushingList[0]);
 		}
 
 		// Lives
@@ -253,8 +251,44 @@ public class PlayerScript : MonoBehaviour
 		}
 	}
 
+
+
+	private void ResetData()	// a list for all data that must be reset every restart
+	{
+		this.transform.position = startPos;
+		this.GetComponent<Collider2D>().isTrigger = false;
+		collideWithHazard = false;
+		canMove = true;
+		canPush = false;
+		isFalling = false;
+		cameraFollow = true;
+		pushingList.Clear ();
+
+		direction = 1;
+	}
+
+	private void RestartLevel()	//hard reset
+	{
+		fadeOut = FadeOut();
+		StartCoroutine(fadeOut);
+
+		for (int i = 0; i < liveList.Length; i++) 	// dead boides back to the defual size and color
+		{
+			liveList [i].transform.position = startLife [i];
+			liveList [i].transform.parent = lifeTr;
+			liveList [i].transform.localScale = new Vector3 (1, 1, 1);
+			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+			liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
+		}
+
+		death = 0;
+		ResetData ();
+	}
+
 	private IEnumerator WaitForRestart()
 	{
+
+		// Character Rotation
 		this.GetComponent<Collider2D>().isTrigger = true;
 		cameraFollow = false;
 		float startRotation = transform.eulerAngles.z;
@@ -267,23 +301,20 @@ public class PlayerScript : MonoBehaviour
 			transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, zRotation);
 			yield return null;
 		}
-		//yield return new WaitForSeconds(1.0f);
-//		Debug.Log ("Wait");
+
+		// Dead Bodies change to platform
 		liveList [death % 6].GetComponent<BoxCollider2D> ().enabled = true;
 		liveList [death % 6].GetComponent<BoxCollider2D> ().isTrigger = false;
-	
-		this.transform.position = startPos;
-		collideWithHazard = false;
-		canMove = true;
+
+		//Reset Data
+
+		ResetData ();
 		death++;
-		this.GetComponent<Collider2D>().isTrigger = false;
-		pushingList.Clear();
-		cameraFollow = true;
-		direction = 1;
 		yield break;
 	}
-
-	private IEnumerator FadeOut() {
+		
+	private IEnumerator FadeOut()
+	{
 		float t = 0.0f;
 		float startAlpha = 0.0f;
 		float endAlpha = 1.0f;
@@ -301,19 +332,8 @@ public class PlayerScript : MonoBehaviour
 			yield return null;
 		}
 		t = 0.0f;
-		death = 0;
-		this.transform.position = startPos;
-//		crush.GetComponent<CrushingRect>().ResetFallingDistance();
-		//Debug.Log(crush.GetComponentInChildren<CrushingRect>().fallingDistance);
-		direction = 1;
-		for (int i = 0; i < liveList.Length; i++){
-			liveList[i].transform.position = startLife[i];
-			liveList[i].transform.parent = lifeTr;
-			liveList [i].transform.localScale = new Vector3 (1, 1, 1);
-			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
 
 			//Debug.Log(liveList[i].transform.position.x);
-		}
 		while (t < 1.0f) {
 			t += Time.deltaTime;
 			/*
@@ -324,7 +344,8 @@ public class PlayerScript : MonoBehaviour
 			Color col = fadeImage.GetComponent<SpriteRenderer>().color;
 			col.a = alp;
 			fadeImage.GetComponent<SpriteRenderer>().color = col;
-
+			canPush = false;
+			isFalling = false;
 			yield return null;
 		}
 
@@ -349,8 +370,7 @@ public class PlayerScript : MonoBehaviour
 			canMove = false;
 			if(death >= liveList.Length)
 			{
-				fadeOut = FadeOut();
-				StartCoroutine(fadeOut);
+				RestartLevel ();
 			}
 		}
 	
@@ -358,6 +378,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
+		Debug.Log ("collision" + collision.transform.name);
 
 		if (collision.transform.tag == "Ground") 
 		{
@@ -366,7 +387,7 @@ public class PlayerScript : MonoBehaviour
 			{ //if the bottom side hit something 
 				//Debug.Log ("You Hit the floor");
 				isFalling = false;
-				collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+			//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}
 		}
 		
@@ -443,7 +464,7 @@ public class PlayerScript : MonoBehaviour
 
 		if(collision.transform.tag == "Ground")
 		{
-			isFalling = true;	
+		//	isFalling = true;	
 		}
 
 	}

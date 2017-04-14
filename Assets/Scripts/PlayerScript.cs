@@ -27,10 +27,14 @@ public class PlayerScript : MonoBehaviour
 	//Life and Death
 	public GameObject[] liveList;
 	private Vector3[] startLife;
-	public Transform lifeTr;
 	public Transform deadBodiesTr;
 	public int death = 0;
 	private float direction;
+
+	// effect on the moving lives
+	public Transform lifeTr;
+	public bool[] lifeJumping;
+	public float jumpingDis;
 
 
 	private GameObject crush;
@@ -58,28 +62,57 @@ public class PlayerScript : MonoBehaviour
 
 		pushingList = new List<GameObject>();
 		startLife = new Vector3[liveList.Length];
+		lifeJumping = new bool[liveList.Length];
 
 		//correction = new Vector3(0f,1.85f,0f);
-		for (int i = 0; i < liveList.Length; i++)
-		{
-		//	liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 0);
-			liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, this.transform.position.y, 0);
-//			Debug.Log (	liveList [i].transform.localPosition.y);
-			//	liveList [i].transform.localPosition = new Vector3(Mathf.Sin(i * 60 * Mathf.Deg2Rad) * 1.2f, Mathf.Cos(i * 60 * Mathf.Deg2Rad) * 1.2f, 0);
-			liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.3f)
-				.SetEase (Ease.InSine)
-				.SetLoops (-1, LoopType.Yoyo)
-				.SetDelay (Random.Range (0, 1f));
-		}
+		death = 0;
+
+		ResetData ();
 
 		for (int i = 0; i < liveList.Length; i++)
 		{
 			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
-
 		}
+	}
+
+	private void ResetData()	// a list for all data that must be reset every restart
+	{
+		this.transform.position = startPos;
+		this.GetComponent<Collider2D>().isTrigger = false;
+		lifeTr.position = Vector3.zero;
+		collideWithHazard = false;
+		canMove = true;
+		canPush = false;
+		isFalling = false;
+		cameraFollow = true;
+		pushingList.Clear ();
+
+		for (int i = 0; i < liveList.Length; i++) 	// dead boides back to the defual size and color
+		{
+			liveList [i].transform.position = startLife [i];
+			liveList [i].transform.parent = lifeTr;
+			liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
+			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+			liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
+			lifeJumping [i] = false;
+			liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, 
+				this.transform.position.y - jumpingDis, 0);
+			liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
+				.SetEase (Ease.InSine)
+				.SetLoops (-1, LoopType.Yoyo)
+				.SetDelay (Random.Range (0, 1f));
+		}
+		direction = 1;
+	}
+
+	private void RestartLevel()	//hard reset
+	{
+		fadeOut = FadeOut();
+		StartCoroutine(fadeOut);
+
+
 
 		death = 0;
-
 		ResetData ();
 	}
 
@@ -104,55 +137,78 @@ public class PlayerScript : MonoBehaviour
 			CheckDeadBodyForPushing (pushingList[0]);
 		}
 
-		// Lives
-		for(int i = death; i < liveList.Length; i ++)
+		// Moving Lives' Effect
+		for (int i = 0; i < liveList.Length; i++) 
 		{
-
-			liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2 - death) * 3f * direction, liveList[i].transform.position.y, 0);
-			if (!collideWithHazard && !isFalling) 
+			
+			if (liveList [i].transform.parent == lifeTr) 
 			{
-				if (!DOTween.IsTweening (liveList [i].transform, true)) 
+				if (!lifeJumping[i]) 
 				{
-					DOTween.Play (liveList[i].transform);
-				}
-
-				if (i - death == 0) 
-				{
-					if(Mathf.Abs (liveList [i].transform.position.x - this.transform.position.x) > 6.5f ||
-						Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y) > 3) 
+					if (!isFalling) 
 					{
-						DOTween.Pause (liveList[i].transform);
-						liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, 
-							this.transform.position.y, 0);
-							
-						liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.2f)
-							.SetEase (Ease.InSine)
-							.SetLoops (-1, LoopType.Yoyo)
-							.SetDelay(Random.Range(0, 1f)).SetDelay(Random.Range(0, 1));
-					}
-				}
-				else
-				{
-					if(Mathf.Abs (liveList [i].transform.position.x - liveList [i - 1].transform.position.x) > 4f ||
-						Mathf.Abs(liveList[i].transform.position.y -liveList [i - 1].transform.position.y) > 3) 
+						if (i - death == 0) 
+						{
+							if(Mathf.Abs(liveList[i - death].transform.position.y - this.transform.position.y ) < 5f)
+							{
+								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+									liveList[i].transform.position.y, 0);
+								
+
+							}
+							else
+							{
+								DOTween.Pause (liveList[i].transform);
+								lifeJumping[i] = true;
+							}
+						}
+					else
 					{
-						DOTween.Pause (liveList[i].transform);
-						liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2) * 3f, 
-							this.transform.position.y, 0);
-						
-						liveList [i].transform.DOMoveY (this.transform.position.y + 2, 0.2f).SetEase (Ease.InSine).SetLoops (-1, LoopType.Yoyo).SetDelay(Random.Range(0, 1f));
+						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
+						{
+							liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+								liveList[i].transform.position.y, 0);
+						}
+						else
+						{
+							DOTween.Pause (liveList[i].transform);
+							lifeJumping[i] = true;
+
+						}
 					}
-					
+
 				}
-
-
-					
 			}
 			else
 			{
-				DOTween.Pause (liveList[i].transform);
+					if (i - death == 0) 
+					{
+						liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
+							new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, this.transform.position.y - jumpingDis, 0), 0.1f);
+					}
+					else
+					{
+						liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
+							new Vector3(liveList[i - 1].transform.position.x + 3f * direction, liveList[i - 1].transform.position.y, 0), 0.1f);
+					}
+
+		
+					if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y) < jumpingDis + 0.01f &&
+						Mathf.Abs(liveList[i].transform.position.x - this.transform.position.x) < (i + 2 - death) * 3 + 0.01f)
+					{
+						lifeJumping[i] = false;
+						Debug.Log (lifeJumping[i]);
+						if (!DOTween.IsTweening (liveList [i].transform, true)) 
+						{
+							liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
+								.SetEase (Ease.InSine)
+								.SetLoops (-1, LoopType.Yoyo)
+								.SetDelay (Random.Range (0, 1f));
+						}
+					}
 			}
 		}
+	}
 
 
 
@@ -164,7 +220,7 @@ public class PlayerScript : MonoBehaviour
 			if(Input.GetKey(KeyCode.A))
 			{
 				direction = Mathf.Lerp(direction, 1, 0.02f);
-				
+
 			//	if (transform.position.x > -150.0f)
 					transform.position += Vector3.left * speed * 0.03f;
 				//Pushing
@@ -253,37 +309,7 @@ public class PlayerScript : MonoBehaviour
 
 
 
-	private void ResetData()	// a list for all data that must be reset every restart
-	{
-		this.transform.position = startPos;
-		this.GetComponent<Collider2D>().isTrigger = false;
-		collideWithHazard = false;
-		canMove = true;
-		canPush = false;
-		isFalling = false;
-		cameraFollow = true;
-		pushingList.Clear ();
 
-		direction = 1;
-	}
-
-	private void RestartLevel()	//hard reset
-	{
-		fadeOut = FadeOut();
-		StartCoroutine(fadeOut);
-
-		for (int i = 0; i < liveList.Length; i++) 	// dead boides back to the defual size and color
-		{
-			liveList [i].transform.position = startLife [i];
-			liveList [i].transform.parent = lifeTr;
-			liveList [i].transform.localScale = new Vector3 (1, 1, 1);
-			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
-			liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
-		}
-
-		death = 0;
-		ResetData ();
-	}
 
 	private IEnumerator WaitForRestart()
 	{
@@ -378,7 +404,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		Debug.Log ("collision" + collision.transform.name);
+//		Debug.Log ("collision" + collision.transform.name);
 
 		if (collision.transform.tag == "Ground") 
 		{
@@ -449,6 +475,21 @@ public class PlayerScript : MonoBehaviour
 		}
 	}
 
+	void OnCollisionStay2D(Collision2D collision)
+	{
+		if (collision.transform.tag == "Ground") 
+		{
+			var normal = collision.contacts[0].normal;
+			if (normal.y > 0) 
+			{ //if the bottom side hit something 
+				//Debug.Log ("You Hit the floor");
+				isFalling = false;
+				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+			}
+		}
+
+	}
+
 	void OnCollisionExit2D(Collision2D collision)
 	{
 		if (collision.transform.parent.name == "DeadBodies") 
@@ -464,7 +505,7 @@ public class PlayerScript : MonoBehaviour
 
 		if(collision.transform.tag == "Ground")
 		{
-		//	isFalling = true;	
+			isFalling = true;	
 		}
 
 	}

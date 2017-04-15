@@ -8,6 +8,7 @@ public class PlayerScript : MonoBehaviour
 {
 
 	public Vector3 startPos;
+	public int maxLives;
 
 	//Basic Movement
 	public float speed = 40.0f;
@@ -19,13 +20,13 @@ public class PlayerScript : MonoBehaviour
 	//Push Dead Bodies
 	public bool canPush;
 //	private GameObject pushBodyGO;
-	public List<GameObject> pushingList;
+	private List<GameObject> pushingList;
 
 
 	public GameObject fadeImage;
 
 	//Life and Death
-	public GameObject[] liveList;
+	private GameObject[] liveList;
 	private Vector3[] startLife;
 	public Transform deadBodiesTr;
 	public int death = 0;
@@ -60,19 +61,23 @@ public class PlayerScript : MonoBehaviour
 
 		crush = GameObject.Find("CrushingRect");
 
+		liveList = new GameObject[maxLives];
+
+
 		pushingList = new List<GameObject>();
-		startLife = new Vector3[liveList.Length];
-		lifeJumping = new bool[liveList.Length];
+		startLife = new Vector3[maxLives];
+		lifeJumping = new bool[maxLives];
 
 		//correction = new Vector3(0f,1.85f,0f);
 		death = 0;
 
-		ResetData ();
-
 		for (int i = 0; i < liveList.Length; i++)
 		{
+			liveList [i] = lifeTr.transform.GetChild (i).gameObject;
 			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
 		}
+
+		ResetData ();
 	}
 
 	private void ResetData()	// a list for all data that must be reset every restart
@@ -87,7 +92,7 @@ public class PlayerScript : MonoBehaviour
 		cameraFollow = true;
 		pushingList.Clear ();
 
-		for (int i = 0; i < liveList.Length; i++) 	// dead boides back to the defual size and color
+		for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
 		{
 			liveList [i].transform.position = startLife [i];
 			liveList [i].transform.parent = lifeTr;
@@ -161,7 +166,7 @@ public class PlayerScript : MonoBehaviour
 								DOTween.Pause (liveList[i].transform);
 								lifeJumping[i] = true;
 							}
-						}
+					}
 					else
 					{
 						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
@@ -332,10 +337,11 @@ public class PlayerScript : MonoBehaviour
 		liveList [death % 6].GetComponent<BoxCollider2D> ().enabled = true;
 		liveList [death % 6].GetComponent<BoxCollider2D> ().isTrigger = false;
 
+		death++;
 		//Reset Data
 
 		ResetData ();
-		death++;
+
 		yield break;
 	}
 		

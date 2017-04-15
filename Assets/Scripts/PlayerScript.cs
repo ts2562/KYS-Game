@@ -13,6 +13,8 @@ public class PlayerScript : MonoBehaviour
 	//Basic Movement
 	public float speed = 40.0f;
 	public Vector2 jumpHeight;
+	private float curjumpHeight;
+	private float jumpTimer;
 	public bool isFalling = false;
 	private bool collideWithHazard;
 	private bool canMove;	// after dying and before reset, the body cannot move
@@ -85,6 +87,8 @@ public class PlayerScript : MonoBehaviour
 		this.transform.position = startPos;
 		this.GetComponent<Collider2D>().isTrigger = false;
 		lifeTr.position = Vector3.zero;
+		curjumpHeight = 0;
+		jumpTimer = 0;
 		collideWithHazard = false;
 		canMove = true;
 		canPush = false;
@@ -235,10 +239,11 @@ public class PlayerScript : MonoBehaviour
 					{
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-							pushingList[i].transform.position = new Vector3(this.transform.position.x -
-									(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-							pushingList[i].transform.position.y, 0);
+						//	pushingList[i].transform.position = new Vector3(this.transform.position.x -
+					//				(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+						//	pushingList[i].transform.position.y, 0);
 						//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
+							pushingList[i].transform.position += Vector3.left * speed * 0.03f;
 						}
 					}
 				
@@ -257,18 +262,41 @@ public class PlayerScript : MonoBehaviour
 						//Debug.Log (pushingList.Count);
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-							pushingList[i].transform.position = new Vector3(this.transform.position.x +  (i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-								pushingList[i].transform.position.y, 0);
+						//	pushingList[i].transform.position = new Vector3(this.transform.position.x +  
+						//		(i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+						//		pushingList[i].transform.position.y, 0);
 						//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
+							pushingList[i].transform.position += Vector3.right * speed * 0.03f;
 						}
 					}
 				}
 			}
-			if (Input.GetKeyDown(KeyCode.Space) && isFalling == false)  //make a limit to how many times player can jump later
+			if (Input.GetKey(KeyCode.Space) && !isFalling)  //make a limit to how many times player can jump later
 			{
-				this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
+				jumpTimer += Time.deltaTime;
+				if (jumpTimer > 0.1f) 
+				{
+					curjumpHeight = jumpHeight.y;
+					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
+					curjumpHeight = 0;
+					isFalling = true;
+					jumpTimer = 0;
+				}
+				Debug.Log (curjumpHeight);
+			
+			}
 
+			if(Input.GetKeyUp(KeyCode.Space) && !isFalling)
+			{
+				if (jumpTimer <= 0.1f) 
+				{
+					curjumpHeight = jumpHeight.y * 0.5f;
+					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
+
+				}
 				isFalling = true;
+				jumpTimer = 0;
+				curjumpHeight = 0;
 			}
 		}
 		float camX, camY;

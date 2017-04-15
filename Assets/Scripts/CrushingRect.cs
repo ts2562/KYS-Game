@@ -5,7 +5,7 @@ using DG.Tweening;
 
 public class CrushingRect : MonoBehaviour 
 {
-	public float fallingDistance;		//default
+//	public float fallingDistance;		//default
 	private Vector3 spawnPos;
 
 	private float curfallingDistance;
@@ -13,7 +13,7 @@ public class CrushingRect : MonoBehaviour
 	void Start () 
 	{
 		spawnPos = this.transform.position;
-		curfallingDistance = fallingDistance;
+//		curfallingDistance = fallingDistance;
 //		FallDown ();
 	}
 
@@ -51,7 +51,7 @@ public class CrushingRect : MonoBehaviour
 	void OnCollisionEnter2D(Collision2D collision)
 	{
 		var normal =  collision.contacts[0].normal;
-		if (normal.y > 0)
+		if (normal.y > 0 || normal.y < 0)
 		{ 
 			GoBack ();
 			//if player's top side hits something 

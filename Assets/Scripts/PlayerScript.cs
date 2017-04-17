@@ -33,6 +33,7 @@ public class PlayerScript : MonoBehaviour
 	public Transform deadBodiesTr;
 	public int death = 0;
 	private float direction;
+	private bool restartLevel;
 
 	// effect on the moving lives
 	public Transform lifeTr;
@@ -79,6 +80,7 @@ public class PlayerScript : MonoBehaviour
 			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
 		}
 
+		restartLevel = false;
 		ResetData ();
 	}
 
@@ -112,6 +114,8 @@ public class PlayerScript : MonoBehaviour
 				.SetDelay (Random.Range (0, 1f));
 		}
 		direction = 1;
+
+		restartLevel = false;
 	}
 
 	private void RestartLevel()	//hard reset
@@ -121,7 +125,8 @@ public class PlayerScript : MonoBehaviour
 
 
 
-		death = 0;
+		death = 0; 
+		Debug.Log ("Restart Death" + death);
 		ResetData ();
 	}
 
@@ -130,93 +135,99 @@ public class PlayerScript : MonoBehaviour
 	{
 		
 		//settings
-		if(Input.GetKey(KeyCode.R))
+		if (!restartLevel) 
 		{
-			RestartLevel ();	
-		}
-		if(Input.GetKey(KeyCode.Escape))
-		{
-	//		Application.LoadLevel(Application.loadedLevel);	// Unity now uses SceneManager instead of Application to manage scenes
-			SceneManager.LoadScene(SceneManager.sceneCount - 1);
-		}
-
-		//Add pushing bodies
-		if (canPush) 
-		{
-			CheckDeadBodyForPushing (pushingList[0]);
-		}
-
-		// Moving Lives' Effect
-		for (int i = 0; i < liveList.Length; i++) 
-		{
-			
-			if (liveList [i].transform.parent == lifeTr) 
+			restartLevel = true;
+			if(Input.GetKey(KeyCode.R))
 			{
-				if (!lifeJumping[i]) 
-				{
-					if (!isFalling) 
-					{
-						if (i - death == 0) 
-						{
-							if(Mathf.Abs(liveList[i - death].transform.position.y - this.transform.position.y ) < 5f)
-							{
-								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
-									liveList[i].transform.position.y, 0);
-								
+				RestartLevel ();	
+			}
+			if(Input.GetKey(KeyCode.Escape))
+			{
+				//		Application.LoadLevel(Application.loadedLevel);	// Unity now uses SceneManager instead of Application to manage scenes
+				SceneManager.LoadScene(SceneManager.sceneCount - 1);
+			}
 
+			//Add pushing bodies
+			if (canPush) 
+			{
+				CheckDeadBodyForPushing (pushingList[0]);
+			}
+
+			// Moving Lives' Effect
+			for (int i = 0; i < liveList.Length; i++) 
+			{
+
+				if (liveList [i].transform.parent == lifeTr) 
+				{
+					if (!lifeJumping[i]) 
+					{
+						if (!isFalling) 
+						{
+							Debug.Log ("Death" + death);
+							if (i - death == 0) 
+							{
+								if(Mathf.Abs(liveList[i - death].transform.position.y - this.transform.position.y ) < 5f)
+								{
+									liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+										liveList[i].transform.position.y, 0);
+
+
+								}
+								else
+								{
+									DOTween.Pause (liveList[i].transform);
+									lifeJumping[i] = true;
+								}
 							}
 							else
 							{
-								DOTween.Pause (liveList[i].transform);
-								lifeJumping[i] = true;
+								if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
+								{
+									liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+										liveList[i].transform.position.y, 0);
+								}
+								else
+								{
+									DOTween.Pause (liveList[i].transform);
+									lifeJumping[i] = true;
+
+								}
 							}
+
+						}
 					}
 					else
 					{
-						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
+						if (i - death == 0) 
 						{
-							liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
-								liveList[i].transform.position.y, 0);
+							liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
+								new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, this.transform.position.y - jumpingDis, 0), 0.1f);
 						}
 						else
 						{
-							DOTween.Pause (liveList[i].transform);
-							lifeJumping[i] = true;
-
+							liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
+								new Vector3(liveList[i - 1].transform.position.x + 3f * direction, liveList[i - 1].transform.position.y, 0), 0.1f);
 						}
-					}
 
-				}
-			}
-			else
-			{
-					if (i - death == 0) 
-					{
-						liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
-							new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, this.transform.position.y - jumpingDis, 0), 0.1f);
-					}
-					else
-					{
-						liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
-							new Vector3(liveList[i - 1].transform.position.x + 3f * direction, liveList[i - 1].transform.position.y, 0), 0.1f);
-					}
 
-		
-					if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y) < jumpingDis + 0.01f &&
-						Mathf.Abs(liveList[i].transform.position.x - this.transform.position.x) < (i + 2 - death) * 3 + 0.01f)
-					{
-						lifeJumping[i] = false;
-						//Debug.Log (lifeJumping[i]);
-						if (!DOTween.IsTweening (liveList [i].transform, true)) 
+						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y) < jumpingDis + 0.01f &&
+							Mathf.Abs(liveList[i].transform.position.x - this.transform.position.x) < (i + 2 - death) * 3 + 0.01f)
 						{
-							liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
-								.SetEase (Ease.InSine)
-								.SetLoops (-1, LoopType.Yoyo)
-								.SetDelay (Random.Range (0, 1f));
+							lifeJumping[i] = false;
+							//Debug.Log (lifeJumping[i]);
+							if (!DOTween.IsTweening (liveList [i].transform, true)) 
+							{
+								liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
+									.SetEase (Ease.InSine)
+									.SetLoops (-1, LoopType.Yoyo)
+									.SetDelay (Random.Range (0, 1f));
+							}
 						}
 					}
-			}
+				}
 		}
+
 	}
 
 
@@ -417,19 +428,20 @@ public class PlayerScript : MonoBehaviour
 		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
 		if(!collideWithHazard)
 		{					
-			liveList[death % 6].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
-			liveList [death % 6].transform.localScale = this.transform.localScale;
-			liveList [death % 6].transform.parent = deadBodiesTr;
-			DOTween.Pause (liveList [death % 6].transform);
+			liveList[death % maxLives].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
+			liveList [death % maxLives].transform.localScale = this.transform.localScale;
+			liveList [death % maxLives].transform.parent = deadBodiesTr;
+			DOTween.Pause (liveList [death % maxLives].transform);
 			
-			liveList[death % 6].transform.position = this.transform.position;
-			liveList[death % 6].GetComponent<BoxCollider2D> ().isTrigger = true;
+			liveList[death % maxLives].transform.position = this.transform.position;
+			liveList[death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = true;
 			waitForRestart = WaitForRestart ();
 			StartCoroutine (waitForRestart);
 			collideWithHazard = true;
 			canMove = false;
 			if(death >= liveList.Length)
 			{
+				restartLevel = true;
 				RestartLevel ();
 			}
 		}

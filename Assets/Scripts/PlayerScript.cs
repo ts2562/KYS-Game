@@ -206,7 +206,7 @@ public class PlayerScript : MonoBehaviour
 						Mathf.Abs(liveList[i].transform.position.x - this.transform.position.x) < (i + 2 - death) * 3 + 0.01f)
 					{
 						lifeJumping[i] = false;
-						Debug.Log (lifeJumping[i]);
+						//Debug.Log (lifeJumping[i]);
 						if (!DOTween.IsTweening (liveList [i].transform, true)) 
 						{
 							liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
@@ -282,7 +282,7 @@ public class PlayerScript : MonoBehaviour
 					isFalling = true;
 					jumpTimer = 0;
 				}
-				Debug.Log (curjumpHeight);
+				//Debug.Log (curjumpHeight);
 			
 			}
 
@@ -312,10 +312,10 @@ public class PlayerScript : MonoBehaviour
 		if (camX > MaxCamX){
 			camX = MaxCamX;
 		}
-		if(camX < MinCamY){
-			camX = MinCamY;
+		if(camX < MinCamX){
+			camX = MinCamX;
 		}
-//		Debug.Log(camY);
+		//Debug.Log(camX);
 		if(cameraFollow)
 			Camera.main.transform.position = new Vector3 (camX, camY, -10);
 
@@ -506,6 +506,11 @@ public class PlayerScript : MonoBehaviour
 		{
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			Debug.Log ("Die on the goal hazard");
+		}
+		if(col.transform.tag == "Checkpoint")
+		{
+			Debug.Log ("hi");
+			startPos = col.transform.position; 
 		}
 	}
 

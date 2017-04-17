@@ -123,17 +123,19 @@ public class PlayerScript : MonoBehaviour
 		fadeOut = FadeOut();
 		StartCoroutine(fadeOut);
 
-
-
-		death = 0; 
-		Debug.Log ("Restart Death" + death);
+		for (int i = 0; i <= deadBodiesTr.childCount; i++){
+			liveList [i].transform.position = startLife [i];
+			liveList[i].transform.parent = lifeTr;
+		}
+		//Debug.Log ("Restart Death" + death);
 		ResetData ();
+		death = 0; 
 	}
 
 	// Update is called once per frame
 	void Update () 
 	{
-		
+		//Debug.Log(death);
 		//settings
 		if (!restartLevel) 
 		{
@@ -164,7 +166,7 @@ public class PlayerScript : MonoBehaviour
 					{
 						if (!isFalling) 
 						{
-							Debug.Log ("Death" + death);
+							//Debug.Log ("Death" + death);
 							if (i - death == 0) 
 							{
 								if(Mathf.Abs(liveList[i - death].transform.position.y - this.transform.position.y ) < 5f)
@@ -373,8 +375,8 @@ public class PlayerScript : MonoBehaviour
 		}
 
 		// Dead Bodies change to platform
-		liveList [death % 6].GetComponent<BoxCollider2D> ().enabled = true;
-		liveList [death % 6].GetComponent<BoxCollider2D> ().isTrigger = false;
+		liveList [death % maxLives].GetComponent<BoxCollider2D> ().enabled = true;
+		liveList [death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = false;
 
 		death++;
 		//Reset Data
@@ -435,14 +437,17 @@ public class PlayerScript : MonoBehaviour
 			
 			liveList[death % maxLives].transform.position = this.transform.position;
 			liveList[death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = true;
-			waitForRestart = WaitForRestart ();
-			StartCoroutine (waitForRestart);
+
 			collideWithHazard = true;
 			canMove = false;
-			if(death >= liveList.Length)
+			if(death >= maxLives)
 			{
 				restartLevel = true;
 				RestartLevel ();
+			}
+			else {
+				waitForRestart = WaitForRestart ();
+				StartCoroutine (waitForRestart);
 			}
 		}
 	
@@ -521,7 +526,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		if(col.transform.tag == "Checkpoint")
 		{
-			Debug.Log ("hi");
+			//Debug.Log ("hi");
 			startPos = col.transform.position; 
 		}
 	}

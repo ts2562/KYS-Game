@@ -6,6 +6,13 @@ using DG.Tweening;
 
 public class PlayerScript : MonoBehaviour 
 {
+	//For sprites
+	public Sprite neutral;
+	public Sprite maxHappy;
+	public Sprite happy;
+	public Sprite maxSad;
+	public Sprite sad;
+	SpriteRenderer sr;
 
 	public Vector3 startPos;
 	public int maxLives;
@@ -60,6 +67,9 @@ public class PlayerScript : MonoBehaviour
 	 
 	void Start () // Init data that only need to init once per level
 	{
+		//for sprite renderer
+		sr = GetComponent<SpriteRenderer>();
+
 		startPos = new Vector3(transform.position.x, transform.position.y, 0);
 
 		crush = GameObject.Find("CrushingRect");
@@ -135,6 +145,23 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		//For sprite
+		if(death == 0){
+			sr.sprite = maxSad;
+		}
+		if(death == 1){
+			sr.sprite = sad;
+		}
+		if(death >= 2 && death <= 4){
+			sr.sprite = neutral;
+		}
+		if(death == 5){
+			sr.sprite = happy;
+		}
+		if(death == 6){
+			sr.sprite = maxHappy;
+		}
+
 		//Debug.Log(death);
 		//settings
 		if (!restartLevel) 

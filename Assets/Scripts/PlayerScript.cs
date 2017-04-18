@@ -55,8 +55,6 @@ public class PlayerScript : MonoBehaviour
 	private IEnumerator fadeOut;	// Only deal with the black mask
 
 
-	//Pushing
-
 
 	public float MaxCamX, MinCamX, MaxCamY, MinCamY;
 
@@ -133,13 +131,16 @@ public class PlayerScript : MonoBehaviour
 		fadeOut = FadeOut();
 		StartCoroutine(fadeOut);
 
-		for (int i = 0; i <= deadBodiesTr.childCount; i++){
-			liveList [i].transform.position = startLife [i];
+		for (int i = 0; i <= deadBodiesTr.childCount; i++)
+		{
 			liveList[i].transform.parent = lifeTr;
+			liveList [i].transform.position = startLife [i];
+
 		}
 		//Debug.Log ("Restart Death" + death);
-		ResetData ();
 		death = 0; 
+		ResetData ();
+	
 	}
 
 	// Update is called once per frame
@@ -166,9 +167,10 @@ public class PlayerScript : MonoBehaviour
 		//settings
 		if (!restartLevel) 
 		{
-			restartLevel = true;
+			
 			if(Input.GetKey(KeyCode.R))
 			{
+				restartLevel = true;
 				RestartLevel ();	
 			}
 			if(Input.GetKey(KeyCode.Escape))
@@ -186,11 +188,13 @@ public class PlayerScript : MonoBehaviour
 			// Moving Lives' Effect
 			for (int i = 0; i < liveList.Length; i++) 
 			{
-
+				Debug.Log (liveList [i].transform.parent );
 				if (liveList [i].transform.parent == lifeTr) 
 				{
+//					Debug.Log ("Jump " + lifeJumping);
 					if (!lifeJumping[i]) 
 					{
+	//					Debug.Log (isFalling);
 						if (!isFalling) 
 						{
 							//Debug.Log ("Death" + death);
@@ -200,7 +204,7 @@ public class PlayerScript : MonoBehaviour
 								{
 									liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
 										liveList[i].transform.position.y, 0);
-
+//									Debug.Log (liveList[i].transform.position);
 
 								}
 								else
@@ -314,7 +318,7 @@ public class PlayerScript : MonoBehaviour
 			if (Input.GetKey(KeyCode.Space) && !isFalling)  //make a limit to how many times player can jump later
 			{
 				jumpTimer += Time.deltaTime;
-				if (jumpTimer > 0.1f) 
+				if (jumpTimer > 0.15f) 
 				{
 					curjumpHeight = jumpHeight.y;
 					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
@@ -328,7 +332,7 @@ public class PlayerScript : MonoBehaviour
 
 			if(Input.GetKeyUp(KeyCode.Space) && !isFalling)
 			{
-				if (jumpTimer <= 0.1f) 
+				if (jumpTimer <= 0.15f) 
 				{
 					curjumpHeight = jumpHeight.y * 0.5f;
 					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
@@ -550,6 +554,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			Debug.Log ("Die on the goal hazard");
+			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
 		}
 		if(col.transform.tag == "Checkpoint")
 		{

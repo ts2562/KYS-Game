@@ -555,9 +555,31 @@ public class PlayerScript : MonoBehaviour
 		}
 		if(col.transform.tag == "Checkpoint")
 		{
-			//Debug.Log ("hi");
+			//Debug.Log (col.GetComponent<SpriteRenderer>().color.b);
 			startPos = col.transform.position; 
 			col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);
+
+			if (col.transform.GetChild(0).tag != "Activated"){
+				death = 0;
+				col.transform.GetChild(0).tag = "Activated";
+				for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
+				{
+					liveList [i].transform.position = startLife [i];
+					liveList [i].transform.parent = lifeTr;
+					liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
+					liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+					liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
+					lifeJumping [i] = false;
+					liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, 
+						this.transform.position.y - jumpingDis, 0);
+					liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
+						.SetEase (Ease.InSine)
+						.SetLoops (-1, LoopType.Yoyo)
+						.SetDelay (Random.Range (0, 1f));
+		
+			}
+			}
+
 		}
 	}
 

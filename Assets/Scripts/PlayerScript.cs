@@ -526,7 +526,12 @@ public class PlayerScript : MonoBehaviour
 			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 		}
 
-
+		if (collision.transform.tag == "GoalHazard") 
+		{
+			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
+			Debug.Log ("Die on the goal hazard");
+			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+		}
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
@@ -552,7 +557,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			//Debug.Log ("hi");
 			startPos = col.transform.position; 
-			col.GetComponent<SpriteRenderer>().color = new Color32 (255,255,0,255);
+			col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);
 		}
 	}
 

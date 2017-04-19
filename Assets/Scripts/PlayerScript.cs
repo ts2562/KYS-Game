@@ -188,7 +188,7 @@ public class PlayerScript : MonoBehaviour
 			// Moving Lives' Effect
 			for (int i = 0; i < liveList.Length; i++) 
 			{
-//				Debug.Log (liveList [i].transform.parent );
+				Debug.Log (liveList [i].transform.parent );
 				if (liveList [i].transform.parent == lifeTr) 
 				{
 //					Debug.Log ("Jump " + lifeJumping);
@@ -534,13 +534,6 @@ public class PlayerScript : MonoBehaviour
 			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 		}
 
-		if (collision.transform.tag == "GoalHazard") 
-		{
-			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
-		}
-
 
 	}
 
@@ -556,12 +549,12 @@ public class PlayerScript : MonoBehaviour
 		
      		//Life1.transform.position = playerPos;
      	}
-		Debug.Log (col.transform.tag);
+
 		if (col.transform.tag == "GoalHazard") 
 		{
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetActiveScene().buildIndex + 1);
+			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
 		}
 		if(col.transform.tag == "Checkpoint")
 		{
@@ -580,12 +573,9 @@ public class PlayerScript : MonoBehaviour
 				//Debug.Log ("You Hit the floor");
 				isFalling = false;
 				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
-			
-			
 			}
 		}
 
-	
 	}
 
 	void OnCollisionExit2D(Collision2D collision)

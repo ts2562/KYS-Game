@@ -15,6 +15,7 @@ public class PlayerScript : MonoBehaviour
 	SpriteRenderer sr;
 
 	public Vector3 startPos;
+	private Vector3 originalStartPos;
 	public int maxLives;
 
 	//Basic Movement
@@ -41,6 +42,7 @@ public class PlayerScript : MonoBehaviour
 	public int death = 0;
 	private float direction;
 	private bool restartLevel;
+	private GameObject[] checkpoints;
 
 	// effect on the moving lives
 	public Transform lifeTr;
@@ -69,6 +71,7 @@ public class PlayerScript : MonoBehaviour
 		sr = GetComponent<SpriteRenderer>();
 
 		startPos = new Vector3(transform.position.x, transform.position.y, 0);
+		originalStartPos = new Vector3(transform.position.x, transform.position.y, 0);
 
 		crush = GameObject.Find("CrushingRect");
 
@@ -134,9 +137,16 @@ public class PlayerScript : MonoBehaviour
 		for (int i = 0; i <= deadBodiesTr.childCount; i++)
 		{
 			liveList[i].transform.parent = lifeTr;
-			liveList [i].transform.position = startLife [i];
+			liveList[i].transform.position = startLife [i];
 
 		}
+		startPos = originalStartPos;
+
+		checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
+		foreach (GameObject check in checkpoints){
+			check.GetComponent<SpriteRenderer>().color = new Color32 (255,255,255,255);
+		}
+
 		//Debug.Log ("Restart Death" + death);
 		death = 0; 
 		ResetData ();
@@ -542,6 +552,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			//Debug.Log ("hi");
 			startPos = col.transform.position; 
+			col.GetComponent<SpriteRenderer>().color = new Color32 (255,255,0,255);
 		}
 	}
 
@@ -565,11 +576,11 @@ public class PlayerScript : MonoBehaviour
 		if (collision.transform.parent.name == "DeadBodies") 
 		{
 			canPush = false;
-/*			for (int i = 0; i < pushingList.Count; i++) 
+			/*for (int i = 0; i < pushingList.Count; i++) 
 			{
 				pushingList [i].GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
 			}*/
-//			pushBodyGO = null;
+			//pushBodyGO = null;
 			pushingList.Clear();	
 		}
 

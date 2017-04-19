@@ -198,34 +198,16 @@ public class PlayerScript : MonoBehaviour
 						if (!isFalling) 
 						{
 							//Debug.Log ("Death" + death);
-							if (i - death == 0) 
+							if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
 							{
-								if(Mathf.Abs(liveList[i - death].transform.position.y - this.transform.position.y ) < 5f)
-								{
-									liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
-										liveList[i].transform.position.y, 0);
-//									Debug.Log (liveList[i].transform.position);
-
-								}
-								else
-								{
-									DOTween.Pause (liveList[i].transform);
-									lifeJumping[i] = true;
-								}
+								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+									liveList[i].transform.position.y, 0);
 							}
 							else
 							{
-								if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
-								{
-									liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
-										liveList[i].transform.position.y, 0);
-								}
-								else
-								{
-									DOTween.Pause (liveList[i].transform);
-									lifeJumping[i] = true;
+								DOTween.Pause (liveList[i].transform);
+								lifeJumping[i] = true;
 
-								}
 							}
 
 						}

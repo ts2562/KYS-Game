@@ -29,7 +29,7 @@ public class PlayerScript : MonoBehaviour
 
 	//Push Dead Bodies
 	public bool canPush;
-//	private GameObject pushBodyGO;
+	//	private GameObject pushBodyGO;
 	private List<GameObject> pushingList;
 
 
@@ -55,7 +55,7 @@ public class PlayerScript : MonoBehaviour
 	//Coroutine
 	private IEnumerator waitForRestart;	// no matter it is the first time of entering the level, or a restart of the level, must call this function to RESET data
 	private IEnumerator fadeOut;	// Only deal with the black mask
-
+	private IEnumerator waitTimer;
 
 
 	public float MaxCamX, MinCamX, MaxCamY, MinCamY;
@@ -64,7 +64,7 @@ public class PlayerScript : MonoBehaviour
 	//height correction
 	//private Vector3 correction;
 
-	 
+
 	void Start () // Init data that only need to init once per level
 	{
 		//for sprite renderer
@@ -91,7 +91,7 @@ public class PlayerScript : MonoBehaviour
 			startLife[i] = new Vector3(liveList[i].transform.position.x, liveList[i].transform.position.y, 0);
 		}
 
-		restartLevel = false;
+		//restartLevel = false;
 		ResetData ();
 	}
 
@@ -145,12 +145,12 @@ public class PlayerScript : MonoBehaviour
 		checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
 		foreach (GameObject check in checkpoints){
 			check.GetComponent<SpriteRenderer>().color = new Color32 (255,255,255,255);
+			check.transform.GetChild(0).tag = "Untagged";
 		}
 
-		//Debug.Log ("Restart Death" + death);
 		death = 0; 
-		ResetData ();
-	
+
+
 	}
 
 	// Update is called once per frame
@@ -173,11 +173,10 @@ public class PlayerScript : MonoBehaviour
 			sr.sprite = maxHappy;
 		}
 
-		//Debug.Log(death);
 		//settings
 		if (!restartLevel) 
 		{
-			
+
 			if(Input.GetKey(KeyCode.R))
 			{
 				restartLevel = true;
@@ -198,16 +197,12 @@ public class PlayerScript : MonoBehaviour
 			// Moving Lives' Effect
 			for (int i = 0; i < liveList.Length; i++) 
 			{
-				Debug.Log (liveList [i].transform.parent );
 				if (liveList [i].transform.parent == lifeTr) 
 				{
-//					Debug.Log ("Jump " + lifeJumping);
 					if (!lifeJumping[i]) 
 					{
-	//					Debug.Log (isFalling);
 						if (!isFalling) 
 						{
-							//Debug.Log ("Death" + death);
 							if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
 							{
 								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
@@ -224,6 +219,7 @@ public class PlayerScript : MonoBehaviour
 					}
 					else
 					{
+						
 						if (i - death == 0) 
 						{
 							liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
@@ -231,6 +227,7 @@ public class PlayerScript : MonoBehaviour
 						}
 						else
 						{
+
 							liveList [i].transform.position = Vector3.Lerp(liveList[i].transform.position, 
 								new Vector3(liveList[i - 1].transform.position.x + 3f * direction, liveList[i - 1].transform.position.y, 0), 0.1f);
 						}
@@ -240,7 +237,6 @@ public class PlayerScript : MonoBehaviour
 							Mathf.Abs(liveList[i].transform.position.x - this.transform.position.x) < (i + 2 - death) * 3 + 0.01f)
 						{
 							lifeJumping[i] = false;
-							//Debug.Log (lifeJumping[i]);
 							if (!DOTween.IsTweening (liveList [i].transform, true)) 
 							{
 								liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
@@ -251,9 +247,9 @@ public class PlayerScript : MonoBehaviour
 						}
 					}
 				}
-		}
+			}
 
-	}
+		}
 
 
 
@@ -266,8 +262,8 @@ public class PlayerScript : MonoBehaviour
 			{
 				direction = Mathf.Lerp(direction, 1, 0.02f);
 
-			//	if (transform.position.x > -150.0f)
-					transform.position += Vector3.left * speed * 0.03f;
+				//	if (transform.position.x > -150.0f)
+				transform.position += Vector3.left * speed * 0.03f;
 				//Pushing
 				if (canPush) 
 				{
@@ -275,33 +271,32 @@ public class PlayerScript : MonoBehaviour
 					{
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-						//	pushingList[i].transform.position = new Vector3(this.transform.position.x -
-					//				(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-						//	pushingList[i].transform.position.y, 0);
-						//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
+							//	pushingList[i].transform.position = new Vector3(this.transform.position.x -
+							//				(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+							//	pushingList[i].transform.position.y, 0);
+							//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
 							pushingList[i].transform.position += Vector3.left * speed * 0.03f;
 						}
 					}
-				
+
 				}
 			}
 			if(Input.GetKey(KeyCode.D))
 			{
 				direction = Mathf.Lerp(direction, -1, 0.02f);
-			//	if (transform.position.x < 150.0f)
-					transform.position += Vector3.right * speed * 0.03f;
-				
+				//	if (transform.position.x < 150.0f)
+				transform.position += Vector3.right * speed * 0.03f;
+
 				if (canPush) 
 				{
 					if (this.transform.position.x <= pushingList [0].transform.position.x) 
 					{
-						//Debug.Log (pushingList.Count);
 						for (int i = 0; i < pushingList.Count; i++) 
 						{
-						//	pushingList[i].transform.position = new Vector3(this.transform.position.x +  
-						//		(i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-						//		pushingList[i].transform.position.y, 0);
-						//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
+							//	pushingList[i].transform.position = new Vector3(this.transform.position.x +  
+							//		(i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+							//		pushingList[i].transform.position.y, 0);
+							//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
 							pushingList[i].transform.position += Vector3.right * speed * 0.03f;
 						}
 					}
@@ -318,8 +313,7 @@ public class PlayerScript : MonoBehaviour
 					isFalling = true;
 					jumpTimer = 0;
 				}
-				//Debug.Log (curjumpHeight);
-			
+
 			}
 
 			if(Input.GetKeyUp(KeyCode.Space) && !isFalling)
@@ -338,7 +332,7 @@ public class PlayerScript : MonoBehaviour
 		float camX, camY;
 		camX = this.transform.position.x;
 		camY = this.transform.position.y;
-	
+
 		if(camY < MinCamY){
 			camY = MinCamY;
 		}
@@ -351,7 +345,6 @@ public class PlayerScript : MonoBehaviour
 		if(camX < MinCamX){
 			camX = MinCamX;
 		}
-		//Debug.Log(camX);
 		if(cameraFollow)
 			Camera.main.transform.position = new Vector3 (camX, camY, -10);
 
@@ -359,13 +352,12 @@ public class PlayerScript : MonoBehaviour
 
 	private void CheckDeadBodyForPushing(GameObject _pushgo)
 	{
-//		Debug.Log (_pushgo);
 		for (int i = 0; i < death; i++) 
 		{
 			if (!pushingList.Contains (liveList [i])) 
 			{
 				if(Mathf.Abs(_pushgo.transform.position.x - liveList[i].transform.position.x) < 
-									_pushgo.GetComponent<SpriteRenderer>().bounds.size.x + 0.01f &&
+					_pushgo.GetComponent<SpriteRenderer>().bounds.size.x + 0.01f &&
 					Mathf.Abs(_pushgo.transform.position.y - liveList[i].transform.position.y) < 
 					_pushgo.GetComponent<SpriteRenderer>().bounds.size.y - 0.01f)
 				{
@@ -396,31 +388,39 @@ public class PlayerScript : MonoBehaviour
 			transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, zRotation);
 			yield return null;
 		}
+		Debug.Log(death %maxLives);
+		int i = death -1;
 
-		// Dead Bodies change to platform
-		liveList [death % maxLives].GetComponent<BoxCollider2D> ().enabled = true;
-		liveList [death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = false;
+		if (i >= 0) {
+			liveList [i].GetComponent<BoxCollider2D> ().enabled = true;
+			liveList [i].GetComponent<BoxCollider2D> ().isTrigger = false;
+		}
 
-		death++;
+		//death++;
 		//Reset Data
 
 		ResetData ();
 
 		yield break;
 	}
-		
+
 	private IEnumerator FadeOut()
 	{
+
+		waitForRestart = WaitForRestart ();
+		StartCoroutine (waitForRestart);
+		death = 0;
 		float t = 0.0f;
 		float startAlpha = 0.0f;
 		float endAlpha = 1.0f;
-		while (t < 1.0f) {
+		float time = 1.5f;
+		while (t < time) {
 			t += Time.deltaTime;
 			/*
 			alpha -= fadeDir * fadeSpeed * Time.deltaTime;
 			alpha = Mathf.Clamp01(alpha);
 			*/
-			float alp = Mathf.Lerp(startAlpha, endAlpha, t/1.0f);
+			float alp = Mathf.Lerp(startAlpha, endAlpha, t);
 			Color col = fadeImage.GetComponent<SpriteRenderer>().color;
 			col.a = alp;
 			fadeImage.GetComponent<SpriteRenderer>().color = col;
@@ -429,8 +429,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		t = 0.0f;
 
-			//Debug.Log(liveList[i].transform.position.x);
-		while (t < 1.0f) {
+		while (t < 1.5f) {
 			t += Time.deltaTime;
 			/*
 			alpha -= fadeDir * fadeSpeed * Time.deltaTime;
@@ -457,7 +456,7 @@ public class PlayerScript : MonoBehaviour
 			liveList [death % maxLives].transform.localScale = this.transform.localScale;
 			liveList [death % maxLives].transform.parent = deadBodiesTr;
 			DOTween.Pause (liveList [death % maxLives].transform);
-			
+
 			liveList[death % maxLives].transform.position = this.transform.position;
 			liveList[death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = true;
 
@@ -471,37 +470,37 @@ public class PlayerScript : MonoBehaviour
 			else {
 				waitForRestart = WaitForRestart ();
 				StartCoroutine (waitForRestart);
+				death++;
 			}
 		}
-	
+
 	}
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-//		Debug.Log ("collision" + collision.transform.name);
+		//Debug.Log(collision.transform.name);
 
 		if (collision.transform.tag == "Ground") 
 		{
 			var normal = collision.contacts[0].normal;
 			if (normal.y > 0) 
 			{ //if the bottom side hit something 
-				//Debug.Log ("You Hit the floor");
 				isFalling = false;
-			//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}
 		}
-		
+
 		if (collision.transform.parent.name == "CrushingRects") 
 		{
 			var normal =  collision.contacts[0].normal;
 			if (normal.y < 0)
 			{ //if player's top side hits something 
-				
+
 				audio.Play();
-			//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
-			//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
+				//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
+				//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
 				Death (collision.gameObject);
-			//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
+				//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
 			} 
 		}
 
@@ -515,11 +514,11 @@ public class PlayerScript : MonoBehaviour
 
 		if (collision.transform.parent.name == "DeadBodies") 
 		{
-			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
+			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y)
+				< this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
 			{
-				
+
 				canPush = true;
-				//Debug.Log (canPush);
 				pushingList.Add(collision.gameObject);
 				CheckDeadBodyForPushing (pushingList[0]);
 			}
@@ -538,14 +537,14 @@ public class PlayerScript : MonoBehaviour
 	{
 		if(col.transform.parent.name == "Spikes")
 		{
-     		//Destroy(col.gameObject);
-     		audio.Play();
+			//Destroy(col.gameObject);
+			audio.Play();
 			//StartCoroutine (waitSeconds (2.0f));
 
 			Death (col.gameObject);
-		
-     		//Life1.transform.position = playerPos;
-     	}
+
+			//Life1.transform.position = playerPos;
+		}
 
 		if (col.transform.tag == "GoalHazard") 
 		{
@@ -555,7 +554,6 @@ public class PlayerScript : MonoBehaviour
 		}
 		if(col.transform.tag == "Checkpoint")
 		{
-			//Debug.Log (col.GetComponent<SpriteRenderer>().color.b);
 			startPos = col.transform.position; 
 			col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);
 
@@ -576,8 +574,8 @@ public class PlayerScript : MonoBehaviour
 						.SetEase (Ease.InSine)
 						.SetLoops (-1, LoopType.Yoyo)
 						.SetDelay (Random.Range (0, 1f));
-		
-			}
+
+				}
 			}
 
 		}
@@ -590,7 +588,6 @@ public class PlayerScript : MonoBehaviour
 			var normal = collision.contacts[0].normal;
 			if (normal.y > 0) 
 			{ //if the bottom side hit something 
-				//Debug.Log ("You Hit the floor");
 				isFalling = false;
 				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}

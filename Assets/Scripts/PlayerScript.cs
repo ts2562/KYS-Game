@@ -354,6 +354,22 @@ public class PlayerScript : MonoBehaviour
 		if(cameraFollow)
 			Camera.main.transform.position = new Vector3 (camX, camY, -10);
 
+		PlayAnimation ();
+
+	}
+
+
+	private void PlayAnimation()
+	{
+		if (isFalling) 
+		{
+			this.transform.GetComponent<Animator>().Play("Jump");
+		}
+		else
+		{
+			Debug.Log ("Play");
+			this.transform.GetComponent<Animator>().Play("Idle");
+		}
 	}
 
 	private void CheckDeadBodyForPushing(GameObject _pushgo)
@@ -624,7 +640,7 @@ public class PlayerScript : MonoBehaviour
 					canPush = false;
 
 					pushingList.Clear ();	
-				}
+				}	
 			}
 
 		}

@@ -57,24 +57,36 @@ public class IceBall : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D _col)
 	{
-		if (_col.transform.parent != null) 
-		{ 
+		if (_col.transform.parent != null && _col.transform.parent.name != "Lives") { 
 			// when the ice ball collide with a dead body or a platform, destroy this ice ball
-		//	if (_col.transform.parent.name == "Lives" || _col.transform.parent.name == "Platforms")
-		//	{
-				for (int i = 0; i < this.transform.childCount; i++) 
-				{
-					if (this.transform.GetChild (i) != null && this.transform.GetChild (i).GetComponent<CircleCollider2D> ().IsTouching(_col.collider)) 
-					{
-						GameObject go = this.transform.GetChild (i).gameObject;
-						PauseTween (this.transform.GetChild(i));
-						go.GetComponent<CircleCollider2D> ().enabled = false;
-						go.transform.DOScale (this.transform.GetChild(i).localScale * 1.5f, 0.15f).SetEase(Ease.InQuad);
-						go.GetComponent<SpriteRenderer>().DOFade (0, 0.3f).SetEase(Ease.InQuad).OnComplete(()=>DestroyGO(go));
-					}
+			//	if (_col.transform.parent.name == "Lives" || _col.transform.parent.name == "Platforms")
+			//	{
+			for (int i = 0; i < this.transform.childCount; i++) {
+				if (this.transform.GetChild (i) != null && this.transform.GetChild (i).GetComponent<CircleCollider2D> ().IsTouching (_col.collider)) {
+					GameObject go = this.transform.GetChild (i).gameObject;
+					PauseTween (this.transform.GetChild (i));
+					go.GetComponent<CircleCollider2D> ().enabled = false;
+					go.transform.DOScale (this.transform.GetChild (i).localScale * 1.5f, 0.15f).SetEase (Ease.InQuad);
+					go.GetComponent<SpriteRenderer> ().DOFade (0, 0.3f).SetEase (Ease.InQuad).OnComplete (() => DestroyGO (go));
 				}
-		//	}
+			}
+			//	}
 
+		}
+		else
+		{
+			for (int i = 0; i < this.transform.childCount; i++) 
+			{
+				if (this.transform.GetChild (i) != null && this.transform.GetChild (i).GetComponent<CircleCollider2D> ().IsTouching(_col.collider)) 
+				{
+					GameObject go = this.transform.GetChild (i).gameObject;
+					PauseTween (this.transform.GetChild(i));
+					go.GetComponent<CircleCollider2D> ().enabled = false;
+					go.transform.DOScale (this.transform.GetChild(i).localScale * 1.5f, 0.15f).SetEase(Ease.InQuad);
+					go.GetComponent<SpriteRenderer>().DOFade (0, 0.3f).SetEase(Ease.InQuad).OnComplete(()=>DestroyGO(go));
+				}
+			}
+			//	}
 		}
 	}
 }

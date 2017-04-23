@@ -30,7 +30,7 @@ public class PlayerScript : MonoBehaviour
 	//Push Dead Bodies
 	public bool canPush;
 //	private GameObject pushBodyGO;
-	private List<GameObject> pushingList;
+	public List<GameObject> pushingList;
 
 
 	public GameObject fadeImage;
@@ -112,6 +112,7 @@ public class PlayerScript : MonoBehaviour
 		for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
 		{
 			liveList [i].transform.position = startLife [i];
+			liveList[i].name = "Life";
 			liveList [i].transform.parent = lifeTr;
 			liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
 			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
@@ -189,38 +190,45 @@ public class PlayerScript : MonoBehaviour
 				SceneManager.LoadScene(SceneManager.sceneCount - 1);
 			}
 
+
+
 			//Add pushing bodies
-			if (canPush) 
+			if (canPush && pushingList.Count > 0) 
 			{
 				CheckDeadBodyForPushing (pushingList[0]);
 			}
 
+			for (int i = 0; i < pushingList.Count; i++) 
+			{
+				if (pushingList [i].name != "Life") 
+				{
+					pushingList.Remove (pushingList[i]);
+				}
+			}	
+
 			// Moving Lives' Effect
 			for (int i = 0; i < liveList.Length; i++) 
 			{
-				Debug.Log (liveList [i].transform.parent );
+	//			Debug.Log (liveList [i].transform.parent );
 				if (liveList [i].transform.parent == lifeTr) 
 				{
 //					Debug.Log ("Jump " + lifeJumping);
 					if (!lifeJumping[i]) 
 					{
 	//					Debug.Log (isFalling);
-						if (!isFalling) 
+						//Debug.Log ("Death" + death);
+						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
 						{
-							//Debug.Log ("Death" + death);
-							if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
-							{
-								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
-									liveList[i].transform.position.y, 0);
-							}
-							else
-							{
-								DOTween.Pause (liveList[i].transform);
-								lifeJumping[i] = true;
-
-							}
+							liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
+								liveList[i].transform.position.y, 0);
+						}
+						else
+						{
+							DOTween.Pause (liveList[i].transform);
+							lifeJumping[i] = true;
 
 						}
+
 					}
 					else
 					{
@@ -269,7 +277,7 @@ public class PlayerScript : MonoBehaviour
 			//	if (transform.position.x > -150.0f)
 					transform.position += Vector3.left * speed * 0.03f;
 				//Pushing
-				if (canPush) 
+				if (canPush && pushingList.Count > 0) 
 				{
 					if (this.transform.position.x >= pushingList [0].transform.position.x) 
 					{
@@ -280,6 +288,7 @@ public class PlayerScript : MonoBehaviour
 						//	pushingList[i].transform.position.y, 0);
 						//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
 							pushingList[i].transform.position += Vector3.left * speed * 0.03f;
+//							Debug.Log (pushingList[i].transform.position);
 						}
 					}
 				
@@ -291,7 +300,7 @@ public class PlayerScript : MonoBehaviour
 			//	if (transform.position.x < 150.0f)
 					transform.position += Vector3.right * speed * 0.03f;
 				
-				if (canPush) 
+				if (canPush && pushingList.Count > 0) 
 				{
 					if (this.transform.position.x <= pushingList [0].transform.position.x) 
 					{
@@ -309,31 +318,12 @@ public class PlayerScript : MonoBehaviour
 			}
 			if (Input.GetKey(KeyCode.Space) && !isFalling)  //make a limit to how many times player can jump later
 			{
-				jumpTimer += Time.deltaTime;
-				if (jumpTimer > 0.15f) 
-				{
-					curjumpHeight = jumpHeight.y;
-					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
-					curjumpHeight = 0;
-					isFalling = true;
-					jumpTimer = 0;
-				}
+				this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
+				isFalling = true;
 				//Debug.Log (curjumpHeight);
 			
 			}
 
-			if(Input.GetKeyUp(KeyCode.Space) && !isFalling)
-			{
-				if (jumpTimer <= 0.15f) 
-				{
-					curjumpHeight = jumpHeight.y * 0.5f;
-					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
-
-				}
-				isFalling = true;
-				jumpTimer = 0;
-				curjumpHeight = 0;
-			}
 		}
 		float camX, camY;
 		camX = this.transform.position.x;
@@ -490,8 +480,30 @@ public class PlayerScript : MonoBehaviour
 			//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}
 		}
-		
-		if (collision.transform.parent.name == "CrushingRects") 
+
+//		Debug.Log (collision.transform.name);
+		if (collision.transform.name == "DeadBodies") 
+		{
+			for (int i = 0; i < collision.transform.childCount; i++) 
+			{
+				if (collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ())) 
+				{
+					if(collision.transform.GetChild(i).name != "BodyGround" &&
+						Mathf.Abs (collision.transform.GetChild (i).position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
+					{
+						canPush = true;
+						//Debug.Log (canPush);
+						pushingList.Add(collision.transform.GetChild (i).gameObject);
+						CheckDeadBodyForPushing (pushingList[0]);
+					}
+					//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
+				}
+
+			}
+			
+
+		}
+		if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
 		{
 			var normal =  collision.contacts[0].normal;
 			if (normal.y < 0)
@@ -505,7 +517,7 @@ public class PlayerScript : MonoBehaviour
 			} 
 		}
 
-		if (collision.transform.parent.name == "IceBallBases") 
+		if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
 		{
 			audio.Play();
 
@@ -513,18 +525,7 @@ public class PlayerScript : MonoBehaviour
 			Death (collision.transform.GetChild(0).gameObject);
 		}
 
-		if (collision.transform.parent.name == "DeadBodies") 
-		{
-			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
-			{
-				
-				canPush = true;
-				//Debug.Log (canPush);
-				pushingList.Add(collision.gameObject);
-				CheckDeadBodyForPushing (pushingList[0]);
-			}
-			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
-		}
+
 
 		if (collision.transform.tag == "GoalHazard") 
 		{
@@ -536,7 +537,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
-		if(col.transform.parent.name == "Spikes")
+		if(col.transform.parent != null && col.transform.parent.name == "Spikes")
 		{
      		//Destroy(col.gameObject);
      		audio.Play();
@@ -600,15 +601,18 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.transform.parent.name == "DeadBodies") 
+		if (collision.transform.name == "DeadBodies") 
 		{
-			canPush = false;
-			/*for (int i = 0; i < pushingList.Count; i++) 
+			for (int i = 0; i < collision.transform.childCount; i++) 
 			{
-				pushingList [i].GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-			}*/
-			//pushBodyGO = null;
-			pushingList.Clear();	
+				if (!collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ()))
+				{
+					canPush = false;
+
+					pushingList.Clear ();	
+				}
+			}
+
 		}
 
 		if(collision.transform.tag == "Ground")

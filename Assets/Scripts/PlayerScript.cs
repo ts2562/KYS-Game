@@ -29,13 +29,8 @@ public class PlayerScript : MonoBehaviour
 
 	//Push Dead Bodies
 	public bool canPush;
-<<<<<<< HEAD
 //	private GameObject pushBodyGO;
 	public List<GameObject> pushingList;
-=======
-	//	private GameObject pushBodyGO;
-	private List<GameObject> pushingList;
->>>>>>> origin/master
 
 
 	public GameObject fadeImage;
@@ -213,15 +208,13 @@ public class PlayerScript : MonoBehaviour
 			// Moving Lives' Effect
 			for (int i = 0; i < liveList.Length; i++) 
 			{
-<<<<<<< HEAD
+
 	//			Debug.Log (liveList [i].transform.parent );
-=======
->>>>>>> origin/master
+
 				if (liveList [i].transform.parent == lifeTr) 
 				{
 					if (!lifeJumping[i]) 
 					{
-<<<<<<< HEAD
 	//					Debug.Log (isFalling);
 						//Debug.Log ("Death" + death);
 						if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
@@ -233,9 +226,7 @@ public class PlayerScript : MonoBehaviour
 						{
 							DOTween.Pause (liveList[i].transform);
 							lifeJumping[i] = true;
-=======
-						if (!isFalling) 
-						{
+
 							if(Mathf.Abs(liveList[i].transform.position.y - this.transform.position.y ) < 5f)
 							{
 								liveList [i].transform.position = new Vector3 (this.transform.position.x + (i + 2) * 3f * direction, 
@@ -247,10 +238,7 @@ public class PlayerScript : MonoBehaviour
 								lifeJumping[i] = true;
 
 							}
->>>>>>> origin/master
-
 						}
-
 					}
 					else
 					{
@@ -320,17 +308,10 @@ public class PlayerScript : MonoBehaviour
 			if(Input.GetKey(KeyCode.D))
 			{
 				direction = Mathf.Lerp(direction, -1, 0.02f);
-<<<<<<< HEAD
-			//	if (transform.position.x < 150.0f)
-					transform.position += Vector3.right * speed * 0.03f;
+
+				transform.position += Vector3.right * speed * 0.03f;
 				
 				if (canPush && pushingList.Count > 0) 
-=======
-				//	if (transform.position.x < 150.0f)
-				transform.position += Vector3.right * speed * 0.03f;
-
-				if (canPush) 
->>>>>>> origin/master
 				{
 					if (this.transform.position.x <= pushingList [0].transform.position.x) 
 					{
@@ -345,25 +326,12 @@ public class PlayerScript : MonoBehaviour
 					}
 				}
 			}
+
 			if (Input.GetKey(KeyCode.Space) && !isFalling)  //make a limit to how many times player can jump later
 			{
-<<<<<<< HEAD
+
 				this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
 				isFalling = true;
-				//Debug.Log (curjumpHeight);
-			
-=======
-				jumpTimer += Time.deltaTime;
-				if (jumpTimer > 0.15f) 
-				{
-					curjumpHeight = jumpHeight.y;
-					this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, curjumpHeight);
-					curjumpHeight = 0;
-					isFalling = true;
-					jumpTimer = 0;
-				}
-
->>>>>>> origin/master
 			}
 
 		}
@@ -528,7 +496,7 @@ public class PlayerScript : MonoBehaviour
 			}
 		}
 
-<<<<<<< HEAD
+
 //		Debug.Log (collision.transform.name);
 		if (collision.transform.name == "DeadBodies") 
 		{
@@ -551,10 +519,8 @@ public class PlayerScript : MonoBehaviour
 			
 
 		}
+
 		if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
-=======
-		if (collision.transform.parent.name == "CrushingRects") 
->>>>>>> origin/master
 		{
 			var normal =  collision.contacts[0].normal;
 			if (normal.y < 0)
@@ -575,23 +541,7 @@ public class PlayerScript : MonoBehaviour
 			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
 			Death (collision.transform.GetChild(0).gameObject);
 		}
-
-<<<<<<< HEAD
-
-=======
-		if (collision.transform.parent.name == "DeadBodies") 
-		{
-			if (Mathf.Abs (collision.transform.position.y - this.transform.position.y)
-				< this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
-			{
-
-				canPush = true;
-				pushingList.Add(collision.gameObject);
-				CheckDeadBodyForPushing (pushingList[0]);
-			}
-			//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
-		}
->>>>>>> origin/master
+				
 
 		if (collision.transform.tag == "GoalHazard") 
 		{

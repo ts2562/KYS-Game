@@ -1,12 +1,13 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\DeadBodies.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Shader\Effect_2.shader">
     <Files>
-      <File FileName="Assets\Scripts\PlayerScript.cs" Line="397" Column="1" />
+      <File FileName="Assets\Scripts\PlayerScript.cs" Line="1" Column="1" />
       <File FileName="Assets\Scripts\HazardSequence.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\CrushingRect.cs" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\IceBall.cs" Line="75" Column="4" />
-      <File FileName="Assets\Scripts\DeadBodies.cs" Line="69" Column="94" />
+      <File FileName="Assets\Scripts\IceBall.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\DeadBodies.cs" Line="1" Column="1" />
+      <File FileName="Assets\Shader\Effect_1.shader" Line="1" Column="1" />
+      <File FileName="Assets\Shader\Effect_2.shader" Line="6" Column="15" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

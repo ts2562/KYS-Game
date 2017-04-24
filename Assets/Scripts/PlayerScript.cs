@@ -410,6 +410,7 @@ public class PlayerScript : MonoBehaviour
 			transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, zRotation);
 			yield return null;
 		}
+		transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
 		Debug.Log(death %maxLives);
 		int i = death -1;
 

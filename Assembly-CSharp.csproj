@@ -47,10 +47,11 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Scripts\CrushingRect.cs" />
-     <Compile Include="Assets\Scripts\Goal3.cs" />
+     <Compile Include="Assets\Scripts\DeadBodies.cs" />
      <Compile Include="Assets\Scripts\HazardSequence.cs" />
      <Compile Include="Assets\Scripts\IceBall.cs" />
      <Compile Include="Assets\Scripts\MusicScript.cs" />
+     <Compile Include="Assets\Scripts\NotUse\Goal3.cs" />
      <Compile Include="Assets\Scripts\NotUse\LifeScript.cs" />
      <Compile Include="Assets\Scripts\NotUse\ScoreScript.cs" />
      <Compile Include="Assets\Scripts\NotUse\SpikeScript.cs" />
@@ -68,9 +69,11 @@
      <Compile Include="Assets\Scripts\NotUse\lvl5scripts\LifeScript5.cs" />
      <Compile Include="Assets\Scripts\NotUse\lvl6scripts\Goal6.cs" />
      <Compile Include="Assets\Scripts\PlayerScript.cs" />
+     <None Include="Assets\Shader\Effect_2.shader" />
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween46.xml" />
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween43.xml" />
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween50.xml" />
+     <None Include="Assets\Shader\Effect_1.shader" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>

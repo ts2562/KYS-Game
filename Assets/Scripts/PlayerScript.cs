@@ -528,6 +528,8 @@ public class PlayerScript : MonoBehaviour
 			{
 				if (collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ())) 
 				{
+					var normal =collision.contacts[0].normal;
+					if (normal.y != 1) {
 					if(collision.transform.GetChild(i).name != "BodyGround" &&
 						Mathf.Abs (collision.transform.GetChild (i).position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
 					{
@@ -536,6 +538,7 @@ public class PlayerScript : MonoBehaviour
 						pushingList.Add(collision.transform.GetChild (i).gameObject);
 						CheckDeadBodyForPushing (pushingList[0]);
 					}
+				}
 					//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 				}
 

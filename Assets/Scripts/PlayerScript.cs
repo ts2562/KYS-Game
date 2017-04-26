@@ -69,7 +69,7 @@ public class PlayerScript : MonoBehaviour
 	{
 		//for sprite renderer
 		sr = GetComponent<SpriteRenderer>();
-
+		tag = "Alive";
 		startPos = new Vector3(transform.position.x, transform.position.y, 0);
 		originalStartPos = new Vector3(transform.position.x, transform.position.y, 0);
 
@@ -188,6 +188,7 @@ public class PlayerScript : MonoBehaviour
 
 			if(Input.GetKey(KeyCode.R))
 			{
+				tag = "Dead";
 				restartLevel = true;
 				RestartLevel ();	
 			}
@@ -512,6 +513,13 @@ public class PlayerScript : MonoBehaviour
 	{
 		Debug.Log(collision.transform.name);
 
+		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
+		{
+			//ime.timeScale = 0;
+			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
+			//Debug.Log ("Die on the goal hazard");
+			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+		}
 		if (collision.transform.tag == "Ground") 
 		{
 			var normal = collision.contacts[0].normal;
@@ -572,17 +580,17 @@ public class PlayerScript : MonoBehaviour
 		}
 				
 
-		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
-		{
-			//ime.timeScale = 0;
-			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			//Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
-		}
+
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		if (col.transform.tag == "GoalHazard" && this.tag == "Alive") 
+		{
+			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
+			Debug.Log ("Die on the goal hazard");
+			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+		}
 		if(col.transform.parent != null && col.transform.parent.name == "Spikes")
 		{
 			//Destroy(col.gameObject);
@@ -594,13 +602,8 @@ public class PlayerScript : MonoBehaviour
 			//Life1.transform.position = playerPos;
 		}
 
-		if (col.transform.tag == "GoalHazard" && this.tag == "Alive") 
-		{
-			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
-		}
-		if(col.transform.tag == "Checkpoint")
+
+		if(col.transform.tag == "Checkpoint" && this.tag == "Alive")
 		{
 			startPos = col.transform.position; 
 			col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);

@@ -97,6 +97,7 @@ public class PlayerScript : MonoBehaviour
 
 	private void ResetData()	// a list for all data that must be reset every restart
 	{
+		this.tag = "Alive";
 		this.transform.position = startPos;
 		this.GetComponent<Collider2D>().isTrigger = false;
 		lifeTr.position = Vector3.zero;
@@ -406,6 +407,7 @@ public class PlayerScript : MonoBehaviour
 
 		// Character Rotation
 		this.GetComponent<Collider2D>().isTrigger = true;
+
 		cameraFollow = false;
 		float startRotation = transform.eulerAngles.z;
 		float endRotation = startRotation + 360.0f;
@@ -489,7 +491,7 @@ public class PlayerScript : MonoBehaviour
 
 			liveList[death % maxLives].transform.position = this.transform.position;
 			liveList[death % maxLives].GetComponent<BoxCollider2D> ().isTrigger = true;
-
+			this.tag = "Dead";
 			collideWithHazard = true;
 			canMove = false;
 			if(death >= maxLives)
@@ -508,7 +510,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		//Debug.Log(collision.transform.name);
+		Debug.Log(collision.transform.name);
 
 		if (collision.transform.tag == "Ground") 
 		{
@@ -521,7 +523,7 @@ public class PlayerScript : MonoBehaviour
 		}
 
 
-//		Debug.Log (collision.transform.name);
+		//Debug.Log (collision.transform.name);
 		if (collision.transform.name == "DeadBodies") 
 		{
 			for (int i = 0; i < collision.transform.childCount; i++) 
@@ -570,10 +572,11 @@ public class PlayerScript : MonoBehaviour
 		}
 				
 
-		if (collision.transform.tag == "GoalHazard") 
+		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
+			//ime.timeScale = 0;
 			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			Debug.Log ("Die on the goal hazard");
+			//Debug.Log ("Die on the goal hazard");
 			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
 		}
 	}
@@ -591,7 +594,7 @@ public class PlayerScript : MonoBehaviour
 			//Life1.transform.position = playerPos;
 		}
 
-		if (col.transform.tag == "GoalHazard") 
+		if (col.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			Debug.Log ("Die on the goal hazard");

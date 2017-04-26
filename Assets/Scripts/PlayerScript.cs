@@ -157,6 +157,13 @@ public class PlayerScript : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		//Dev Cheat
+		if(Input.GetKey(KeyCode.O)){
+            SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex - 1);
+        }        
+        if(Input.GetKey(KeyCode.P)){
+            SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+        }
 		//For sprite
 		if(death == 0){
 			sr.sprite = maxSad;
@@ -476,7 +483,7 @@ public class PlayerScript : MonoBehaviour
 		if(!collideWithHazard)
 		{					
 			liveList[death % maxLives].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
-			liveList [death % maxLives].transform.localScale = this.transform.localScale;
+			liveList [death % maxLives].transform.localScale =  new Vector3 (1.2f, 1.2f, 1); //this.transform.localScale;
 			liveList [death % maxLives].transform.parent = deadBodiesTr;
 			DOTween.Pause (liveList [death % maxLives].transform);
 

@@ -376,7 +376,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		else
 		{
-			Debug.Log ("Play");
+//			Debug.Log ("Play");
 			this.transform.GetComponent<Animator>().Play("Idle");
 		}
 	}

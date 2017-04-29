@@ -52,6 +52,10 @@ public class PlayerScript : MonoBehaviour
 
 	private GameObject crush;
 	public AudioSource audio;
+	public AudioSource spikeSound;
+	public AudioSource frozenSound;
+	public AudioSource crushSound;
+	public AudioSource victorySound;
 	//Coroutine
 	private IEnumerator waitForRestart;	// no matter it is the first time of entering the level, or a restart of the level, must call this function to RESET data
 	private IEnumerator fadeOut;	// Only deal with the black mask
@@ -516,6 +520,7 @@ public class PlayerScript : MonoBehaviour
 		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
 			//ime.timeScale = 0;
+			victorySound.Play();
 			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			//Debug.Log ("Die on the goal hazard");
 			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
@@ -563,7 +568,7 @@ public class PlayerScript : MonoBehaviour
 			if (normal.y < 0)
 			{ //if player's top side hits something 
 
-				audio.Play();
+				crushSound.Play();
 				//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
 				//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
 				Death (collision.gameObject);
@@ -573,7 +578,7 @@ public class PlayerScript : MonoBehaviour
 
 		if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
 		{
-			audio.Play();
+			frozenSound.Play();
 
 			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
 			Death (collision.transform.GetChild(0).gameObject);
@@ -594,7 +599,7 @@ public class PlayerScript : MonoBehaviour
 		if(col.transform.parent != null && col.transform.parent.name == "Spikes")
 		{
 			//Destroy(col.gameObject);
-			audio.Play();
+			spikeSound.Play();
 			//StartCoroutine (waitSeconds (2.0f));
 
 			Death (col.gameObject);

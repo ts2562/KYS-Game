@@ -630,6 +630,11 @@ public class PlayerScript : MonoBehaviour
 			}
 
 		}
+
+		if (col.name == "Credit") 
+		{
+			col.GetComponent<SpriteRenderer> ().DOFade (1, 0.2f);
+		}
 	}
 
 	void OnCollisionStay2D(Collision2D collision)

@@ -1,8 +1,4 @@
 sceneSetups:
-<<<<<<< HEAD
-- path: Assets/Scenes/Level4.unity
-=======
-- path: Assets/Scenes/Large_Level_1.unity
->>>>>>> 25772c15b77fc10230bd3aac5bf543b01fd2718b
+- path: Assets/Scenes/Credit Scene.unity
   isLoaded: 1
   isActive: 1

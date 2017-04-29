@@ -6,7 +6,7 @@
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <RootNamespace></RootNamespace>
-    <ProjectGuid>{946BAD13-2003-A2EB-98B9-BA2494C06E41}</ProjectGuid>
+    <ProjectGuid>{FD59D49F-F038-AE7F-0B66-61B48EC808B1}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <AssemblyName>Assembly-CSharp</AssemblyName>
@@ -39,13 +39,14 @@
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEngine.dll</HintPath>
+      <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/Managed/UnityEngine.dll</HintPath>
     </Reference>
     <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor/Data/Managed/UnityEditor.dll</HintPath>
+      <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/Managed/UnityEditor.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Scripts\CloudMovement.cs" />
      <Compile Include="Assets\Scripts\CrushingRect.cs" />
      <Compile Include="Assets\Scripts\DeadBodies.cs" />
      <Compile Include="Assets\Scripts\HazardSequence.cs" />
@@ -75,35 +76,41 @@
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween43.xml" />
      <None Include="Assets\Shader\Effect_1.shader" />
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween50.xml" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Networking">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.PlaymodeTestsRunner">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/PlaymodeTestsRunner/UnityEngine.PlaymodeTestsRunner.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.Analytics">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityAnalytics/UnityEngine.Analytics.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
- <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>
  </Reference>
  <Reference Include="DOTween">
- <HintPath>C:/Users/Timothy/Documents/Unity_Intro_Week_9/Week4/Game Design Prototype 3/Assets/Scripts/Demigiant/DOTween/DOTween.dll</HintPath>
+ <HintPath>C:/Users/cynth/Desktop/GithubSync/KYS/Assets/Scripts/Demigiant/DOTween/DOTween.dll</HintPath>
  </Reference>
  <Reference Include="DOTween43">
- <HintPath>C:/Users/Timothy/Documents/Unity_Intro_Week_9/Week4/Game Design Prototype 3/Assets/Scripts/Demigiant/DOTween/DOTween43.dll</HintPath>
+ <HintPath>C:/Users/cynth/Desktop/GithubSync/KYS/Assets/Scripts/Demigiant/DOTween/DOTween43.dll</HintPath>
  </Reference>
  <Reference Include="DOTween46">
- <HintPath>C:/Users/Timothy/Documents/Unity_Intro_Week_9/Week4/Game Design Prototype 3/Assets/Scripts/Demigiant/DOTween/DOTween46.dll</HintPath>
+ <HintPath>C:/Users/cynth/Desktop/GithubSync/KYS/Assets/Scripts/Demigiant/DOTween/DOTween46.dll</HintPath>
  </Reference>
  <Reference Include="DOTween50">
- <HintPath>C:/Users/Timothy/Documents/Unity_Intro_Week_9/Week4/Game Design Prototype 3/Assets/Scripts/Demigiant/DOTween/DOTween50.dll</HintPath>
+ <HintPath>C:/Users/cynth/Desktop/GithubSync/KYS/Assets/Scripts/Demigiant/DOTween/DOTween50.dll</HintPath>
  </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

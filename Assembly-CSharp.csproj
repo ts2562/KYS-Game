@@ -49,6 +49,7 @@
      <Compile Include="Assets\Scripts\CloudMovement.cs" />
      <Compile Include="Assets\Scripts\CrushingRect.cs" />
      <Compile Include="Assets\Scripts\DeadBodies.cs" />
+     <Compile Include="Assets\Scripts\Gudie.cs" />
      <Compile Include="Assets\Scripts\HazardSequence.cs" />
      <Compile Include="Assets\Scripts\IceBall.cs" />
      <Compile Include="Assets\Scripts\MusicScript.cs" />

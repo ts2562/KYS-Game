@@ -669,9 +669,18 @@ public class PlayerScript : MonoBehaviour
 
 		}
 
+		// -------------------------- Credit
 		if (col.name == "Credit") 
 		{
 			col.GetComponent<SpriteRenderer> ().DOFade (1, 0.2f);
+		}
+
+		// -------------------------- Title
+
+		if (col.name == "A" || col.name == "D" || col.name == "Space") 
+		{
+			Gudie._instance.guideProgress++;
+			Gudie._instance.ShowNewGuide ();
 		}
 	}
 

@@ -25,6 +25,7 @@ public class PlayerScript : MonoBehaviour
 	private float curjumpHeight;
 	private float jumpTimer;
 	public bool isFalling = false;
+	public bool canJump;
 	private bool collideWithHazard;
 	private bool canMove;	// after dying and before reset, the body cannot move
 
@@ -109,6 +110,7 @@ public class PlayerScript : MonoBehaviour
 		canMove = true;
 		canPush = false;
 		isFalling = false;
+		canJump = false;
 		cameraFollow = true;
 		pushingList.Clear ();
 
@@ -338,16 +340,34 @@ public class PlayerScript : MonoBehaviour
 				}
 			}
 
-			if (Input.GetKey(KeyCode.Space))  //make a limit to how many times player can jump later
+			if (Input.GetKeyDown (KeyCode.Space)) 
+			{
+				if (!isFalling) 
+				{
+					canJump = true;
+				}
+				else
+				{
+					jumpTimer = 0;
+					curJumpSpeed = Vector2.zero;
+				//	this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+					canJump = false;
+
+				}
+
+			}
+
+			if (Input.GetKey(KeyCode.Space) && canJump)  //make a limit to how many times player can jump later
 			{
 				if (curJumpSpeed.y < maxJumpSpeed.y) 
 				{	
-					jumpTimer += Time.deltaTime * 200;
+					jumpTimer += Time.deltaTime * 120;
 					curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer);
 					this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
 				}
 				else
 				{
+					canJump = false;
 					isFalling = true;
 				}
 			//	this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
@@ -358,7 +378,7 @@ public class PlayerScript : MonoBehaviour
 			{
 				jumpTimer = 0;
 				curJumpSpeed = Vector2.zero;
-				this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+				//this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
 			}
 
 		}

@@ -20,7 +20,8 @@ public class PlayerScript : MonoBehaviour
 
 	//Basic Movement
 	public float speed = 40.0f;
-	public Vector2 jumpHeight;
+	public Vector2 curJumpSpeed;
+	private Vector2 maxJumpSpeed;
 	private float curjumpHeight;
 	private float jumpTimer;
 	public bool isFalling = false;
@@ -81,6 +82,7 @@ public class PlayerScript : MonoBehaviour
 		pushingList = new List<GameObject>();
 		startLife = new Vector3[maxLives];
 		lifeJumping = new bool[maxLives];
+		maxJumpSpeed = new Vector2 (0, 30);
 
 		//correction = new Vector3(0f,1.85f,0f);
 		death = 0;
@@ -101,7 +103,7 @@ public class PlayerScript : MonoBehaviour
 		this.transform.position = startPos;
 		this.GetComponent<Collider2D>().isTrigger = false;
 		lifeTr.position = Vector3.zero;
-		curjumpHeight = 0;
+		curjumpHeight = 1;
 		jumpTimer = 0;
 		collideWithHazard = false;
 		canMove = true;
@@ -336,11 +338,27 @@ public class PlayerScript : MonoBehaviour
 				}
 			}
 
-			if (Input.GetKey(KeyCode.Space) && !isFalling)  //make a limit to how many times player can jump later
+			if (Input.GetKey(KeyCode.Space))  //make a limit to how many times player can jump later
 			{
+				if (curJumpSpeed.y < maxJumpSpeed.y) 
+				{	
+					jumpTimer += Time.deltaTime * 200;
+					curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer);
+					this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
+				}
+				else
+				{
+					isFalling = true;
+				}
+			//	this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
 
-				this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
-				isFalling = true;
+			}
+
+			if (Input.GetKeyUp (KeyCode.Space)) 
+			{
+				jumpTimer = 0;
+				curJumpSpeed = Vector2.zero;
+				this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
 			}
 
 		}
@@ -511,7 +529,7 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-		Debug.Log(collision.transform.name);
+//		Debug.Log(collision.transform.name);
 
 		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
@@ -645,6 +663,8 @@ public class PlayerScript : MonoBehaviour
 			if (normal.y > 0) 
 			{ //if the bottom side hit something 
 				isFalling = false;
+				jumpTimer = 0;
+				curJumpSpeed = Vector2.zero;
 				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
 			}
 		}
@@ -660,7 +680,6 @@ public class PlayerScript : MonoBehaviour
 				if (!collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ()))
 				{
 					canPush = false;
-
 					pushingList.Clear ();	
 				}	
 			}

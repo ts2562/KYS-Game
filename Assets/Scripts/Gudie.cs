@@ -6,6 +6,7 @@ public class Gudie : MonoBehaviour
 {
 
 	public static Gudie _instance;
+	public Transform guideWall;
 	public int guideProgress;
 
 
@@ -35,6 +36,11 @@ public class Gudie : MonoBehaviour
 			{
 				this.transform.GetChild (i).gameObject.SetActive (false);
 			}
+		}
+
+		if (guideProgress == 3) 
+		{
+			guideWall.gameObject.SetActive (false);	
 		}
 	}
 }

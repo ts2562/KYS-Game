@@ -45,6 +45,7 @@ public class PlayerScript : MonoBehaviour
 	private float direction;
 	private bool restartLevel;
 	private GameObject[] checkpoints;
+	public Transform nextLevel;
 
 	// effect on the moving lives
 	public Transform lifeTr;
@@ -58,6 +59,8 @@ public class PlayerScript : MonoBehaviour
 	private IEnumerator waitForRestart;	// no matter it is the first time of entering the level, or a restart of the level, must call this function to RESET data
 	private IEnumerator fadeOut;	// Only deal with the black mask
 	private IEnumerator waitTimer;
+
+	private bool levelClear;	// when beat a level, pause the screen, show an icon indicates "Press Y to continue"
 
 
 	public float MaxCamX, MinCamX, MaxCamY, MinCamY;
@@ -114,12 +117,14 @@ public class PlayerScript : MonoBehaviour
 		cameraFollow = true;
 		pushingList.Clear ();
 
+		levelClear = false;
+
 		for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
 		{
 			liveList [i].transform.position = startLife [i];
 			liveList[i].name = "Life";
 			liveList [i].transform.parent = lifeTr;
-			liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
+			liveList [i].transform.localScale = new Vector3 (0.5f, 0.5f, 1);
 			liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
 			liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
 			lifeJumping [i] = false;
@@ -163,7 +168,121 @@ public class PlayerScript : MonoBehaviour
 	void Update () 
 	{
 		//Dev Cheat
-		if(Input.GetKey(KeyCode.O)){
+
+		if (!levelClear) 
+		{
+			//Movement
+			if (canMove)
+			{
+
+				if(Input.GetKey(KeyCode.A))
+				{
+					direction = Mathf.Lerp(direction, 1, 0.02f);
+
+					//	if (transform.position.x > -150.0f)
+					transform.position += Vector3.left * speed * 0.03f;
+					//Pushing
+					if (canPush && pushingList.Count > 0) 
+					{
+						if (this.transform.position.x >= pushingList [0].transform.position.x) 
+						{
+							for (int i = 0; i < pushingList.Count; i++) 
+							{
+								//	pushingList[i].transform.position = new Vector3(this.transform.position.x -
+								//				(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+								//	pushingList[i].transform.position.y, 0);
+								//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
+								pushingList[i].transform.position += Vector3.left * speed * 0.03f;
+								//							Debug.Log (pushingList[i].transform.position);
+							}
+						}
+
+					}
+				}
+				if(Input.GetKey(KeyCode.D))
+				{
+					direction = Mathf.Lerp(direction, -1, 0.02f);
+
+					transform.position += Vector3.right * speed * 0.03f;
+
+					if (canPush && pushingList.Count > 0) 
+					{
+						if (this.transform.position.x <= pushingList [0].transform.position.x) 
+						{
+							for (int i = 0; i < pushingList.Count; i++) 
+							{
+								//	pushingList[i].transform.position = new Vector3(this.transform.position.x +  
+								//		(i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
+								//		pushingList[i].transform.position.y, 0);
+								//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
+								pushingList[i].transform.position += Vector3.right * speed * 0.03f;
+							}
+						}
+					}
+				}
+
+				if (Input.GetKeyDown (KeyCode.Space)) 
+				{
+					if (!isFalling) 
+					{
+						canJump = true;
+					}
+					else
+					{
+						jumpTimer = 0;
+						curJumpSpeed = Vector2.zero;
+						//	this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+						canJump = false;
+
+					}
+
+				}
+
+				if (Input.GetKey(KeyCode.Space) && canJump)  //make a limit to how many times player can jump later
+				{
+					if (curJumpSpeed.y < maxJumpSpeed.y) 
+					{	
+						jumpTimer += Time.deltaTime * 120;
+						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer);
+						this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
+					}
+					else
+					{
+						canJump = false;
+						isFalling = true;
+					}
+					//	this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
+
+				}
+
+				if (Input.GetKeyUp (KeyCode.Space)) 
+				{
+					jumpTimer = 0;
+					curJumpSpeed = Vector2.zero;
+					//this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
+				}
+
+			}
+		}
+		else
+		{
+			if (Input.GetKeyDown (KeyCode.Y)) 
+			{
+				if (SceneManager.GetSceneAt (0).buildIndex == SceneManager.sceneCountInBuildSettings - 1) 
+				{
+					SceneManager.LoadScene (0);
+				}
+				else
+				{
+					SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+				}
+
+			}
+		}
+
+
+		if(Input.GetKey(KeyCode.O))
+		{
             SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex - 1);
         }        
         if(Input.GetKey(KeyCode.P)){
@@ -286,102 +405,7 @@ public class PlayerScript : MonoBehaviour
 			}
 
 		}
-
-
-
-
-		//Movement
-		if (canMove)
-		{
-
-			if(Input.GetKey(KeyCode.A))
-			{
-				direction = Mathf.Lerp(direction, 1, 0.02f);
-
-				//	if (transform.position.x > -150.0f)
-				transform.position += Vector3.left * speed * 0.03f;
-				//Pushing
-				if (canPush && pushingList.Count > 0) 
-				{
-					if (this.transform.position.x >= pushingList [0].transform.position.x) 
-					{
-						for (int i = 0; i < pushingList.Count; i++) 
-						{
-							//	pushingList[i].transform.position = new Vector3(this.transform.position.x -
-							//				(i + 1) * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-							//	pushingList[i].transform.position.y, 0);
-							//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
-							pushingList[i].transform.position += Vector3.left * speed * 0.03f;
-//							Debug.Log (pushingList[i].transform.position);
-						}
-					}
-
-				}
-			}
-			if(Input.GetKey(KeyCode.D))
-			{
-				direction = Mathf.Lerp(direction, -1, 0.02f);
-
-				transform.position += Vector3.right * speed * 0.03f;
-				
-				if (canPush && pushingList.Count > 0) 
-				{
-					if (this.transform.position.x <= pushingList [0].transform.position.x) 
-					{
-						for (int i = 0; i < pushingList.Count; i++) 
-						{
-							//	pushingList[i].transform.position = new Vector3(this.transform.position.x +  
-							//		(i + 1)  * this.transform.GetComponent<SpriteRenderer>().bounds.size.x,
-							//		pushingList[i].transform.position.y, 0);
-							//	pushingList [i].GetComponent<Rigidbody2D> ().velocity = new Vector2(1, 0);
-							pushingList[i].transform.position += Vector3.right * speed * 0.03f;
-						}
-					}
-				}
-			}
-
-			if (Input.GetKeyDown (KeyCode.Space)) 
-			{
-				if (!isFalling) 
-				{
-					canJump = true;
-				}
-				else
-				{
-					jumpTimer = 0;
-					curJumpSpeed = Vector2.zero;
-				//	this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-					canJump = false;
-
-				}
-
-			}
-
-			if (Input.GetKey(KeyCode.Space) && canJump)  //make a limit to how many times player can jump later
-			{
-				if (curJumpSpeed.y < maxJumpSpeed.y) 
-				{	
-					jumpTimer += Time.deltaTime * 120;
-					curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer);
-					this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
-				}
-				else
-				{
-					canJump = false;
-					isFalling = true;
-				}
-			//	this.GetComponent<Rigidbody2D> ().velocity = new Vector2 (jumpHeight.x, jumpHeight.y);
-
-			}
-
-			if (Input.GetKeyUp (KeyCode.Space)) 
-			{
-				jumpTimer = 0;
-				curJumpSpeed = Vector2.zero;
-				//this.GetComponent<Rigidbody2D> ().velocity = Vector2.zero;
-			}
-
-		}
+	
 		float camX, camY;
 		camX = this.transform.position.x;
 		camY = this.transform.position.y;
@@ -518,13 +542,25 @@ public class PlayerScript : MonoBehaviour
 		yield break;
 	}
 
+
+	private void LevelClear()
+	{
+		Debug.Log ("Die on the goal hazard");
+		levelClear = true;
+		nextLevel.position = this.transform.position;
+		nextLevel.gameObject.SetActive(true);
+		nextLevel.DOMove(new Vector3(this.transform.position.x, this.transform.position.y + 5, 0), 0.5f);
+		nextLevel.GetComponent<SpriteRenderer> ().DOColor (new Color32(232, 178, 178, 250), 1f).SetLoops(-1, LoopType.Yoyo).SetEase(Ease.Linear);
+		//SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
+	}
+
 	private void Death(GameObject _go)			// No matter colliders which kinds of hazards, must call this function to creat a dead body
 	{
 		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
 		if(!collideWithHazard)
 		{					
 			liveList[death % maxLives].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
-			liveList [death % maxLives].transform.localScale =  new Vector3 (1.2f, 1.2f, 1); //this.transform.localScale;
+			liveList [death % maxLives].transform.localScale =  new Vector3 (0.8f, 0.8f, 1); //this.transform.localScale;
 			liveList [death % maxLives].transform.parent = deadBodiesTr;
 			DOTween.Pause (liveList [death % maxLives].transform);
 
@@ -553,172 +589,192 @@ public class PlayerScript : MonoBehaviour
 
 		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
-			//ime.timeScale = 0;
 			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			//Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
-		}
-		if (collision.transform.tag == "Ground") 
-		{
-			var normal = collision.contacts[0].normal;
-			if (normal.y > 0) 
-			{ //if the bottom side hit something 
-				isFalling = false;
-				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
-			}
+			LevelClear ();
 		}
 
-
-		//Debug.Log (collision.transform.name);
-		if (collision.transform.name == "DeadBodies") 
+		if (levelClear)
 		{
-			for (int i = 0; i < collision.transform.childCount; i++) 
+			if (collision.transform.tag == "Ground") 
 			{
-				if (collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ())) 
+				var normal = collision.contacts[0].normal;
+				if (normal.y > 0) 
+				{ //if the bottom side hit something 
+					isFalling = false;
+					//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+				}
+			}
+
+
+			//Debug.Log (collision.transform.name);
+			if (collision.transform.name == "DeadBodies") 
+			{
+				for (int i = 0; i < collision.transform.childCount; i++) 
 				{
-					var normal =collision.contacts[0].normal;
-					if (normal.y != 1) {
-					if(collision.transform.GetChild(i).name != "BodyGround" &&
-						Mathf.Abs (collision.transform.GetChild (i).position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
+					if (collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ())) 
 					{
-						canPush = true;
-						//Debug.Log (canPush);
-						pushingList.Add(collision.transform.GetChild (i).gameObject);
-						CheckDeadBodyForPushing (pushingList[0]);
+						var normal =collision.contacts[0].normal;
+						if (normal.y != 1) {
+							if(collision.transform.GetChild(i).name != "BodyGround" &&
+								Mathf.Abs (collision.transform.GetChild (i).position.y - this.transform.position.y) < this.GetComponent<SpriteRenderer> ().bounds.size.y - 0.1f) 
+							{
+								canPush = true;
+								//Debug.Log (canPush);
+								pushingList.Add(collision.transform.GetChild (i).gameObject);
+								CheckDeadBodyForPushing (pushingList[0]);
+							}
+						}
+						//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
 					}
+
 				}
-					//		pushBodyGO = collision.gameObject.GetComponent<BoxCollider2D>().gameObject;
-				}
+
 
 			}
-			
 
-		}
+			if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
+			{
+				var normal =  collision.contacts[0].normal;
+				if (normal.y < 0)
+				{ //if player's top side hits something 
 
-		if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
-		{
-			var normal =  collision.contacts[0].normal;
-			if (normal.y < 0)
-			{ //if player's top side hits something 
+					audio.Play();
+					//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
+					//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
+					Death (collision.gameObject);
+					//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
+				} 
+			}
 
+			if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
+			{
 				audio.Play();
-				//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
-				//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
-				Death (collision.gameObject);
-				//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
-			} 
-		}
 
-		if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
-		{
-			audio.Play();
+				collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
+				Death (collision.transform.GetChild(0).gameObject);
+			}
 
-			collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
-			Death (collision.transform.GetChild(0).gameObject);
+
+			
 		}
-				
 
 
 	}
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		
 		if (col.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			Debug.Log ("Die on the goal hazard");
-			SceneManager.LoadScene (SceneManager.GetSceneAt(0).buildIndex + 1);
-		}
-		if(col.transform.parent != null && col.transform.parent.name == "Spikes")
-		{
-			//Destroy(col.gameObject);
-			audio.Play();
-			//StartCoroutine (waitSeconds (2.0f));
-
-			Death (col.gameObject);
-
-			//Life1.transform.position = playerPos;
+			LevelClear ();
 		}
 
 
-		if(col.transform.tag == "Checkpoint" && this.tag == "Alive")
+		if (!levelClear) 
 		{
-			startPos = col.transform.position; 
-			col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);
 
-			if (col.transform.GetChild(0).tag != "Activated"){
-				death = 0;
-				col.transform.GetChild(0).tag = "Activated";
-				for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
-				{
-					liveList [i].transform.position = startLife [i];
-					liveList [i].transform.parent = lifeTr;
-					liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
-					liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
-					liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
-					lifeJumping [i] = false;
-					liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, 
-						this.transform.position.y - jumpingDis, 0);
-					liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
-						.SetEase (Ease.InSine)
-						.SetLoops (-1, LoopType.Yoyo)
-						.SetDelay (Random.Range (0, 1f));
+			if(col.transform.parent != null && col.transform.parent.name == "Spikes")
+			{
+				//Destroy(col.gameObject);
+				audio.Play();
+				//StartCoroutine (waitSeconds (2.0f));
 
-				}
+				Death (col.gameObject);
+
+				//Life1.transform.position = playerPos;
 			}
 
+
+			if(col.transform.tag == "Checkpoint" && this.tag == "Alive")
+			{
+				startPos = col.transform.position; 
+				col.GetComponent<SpriteRenderer>().color = new Color32 (255, 255, 0, 255);
+
+				if (col.transform.GetChild(0).tag != "Activated"){
+					death = 0;
+					col.transform.GetChild(0).tag = "Activated";
+					for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
+					{
+						liveList [i].transform.position = startLife [i];
+						liveList [i].transform.parent = lifeTr;
+						liveList [i].transform.localScale = new Vector3 (0.8f, 0.8f, 1);
+						liveList [i].GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1, 1);
+						liveList [i].GetComponent<BoxCollider2D> ().enabled = false;
+						lifeJumping [i] = false;
+						liveList [i].transform.position = new Vector3(this.transform.position.x + (i + 2 - death) * 3f * direction, 
+							this.transform.position.y - jumpingDis, 0);
+						liveList [i].transform.DOMoveY(liveList[i].transform.position.y + 2, 0.3f)
+							.SetEase (Ease.InSine)
+							.SetLoops (-1, LoopType.Yoyo)
+							.SetDelay (Random.Range (0, 1f));
+
+					}
+				}
+
+			}
+
+			// -------------------------- Credit
+			if (col.name == "Credit") 
+			{
+				col.GetComponent<SpriteRenderer> ().DOFade (1, 0.2f);
+			}
+
+			// -------------------------- Title
+
+			if (col.name == "A" || col.name == "D" || col.name == "Space") 
+			{
+				Gudie._instance.guideProgress++;
+				Gudie._instance.ShowNewGuide ();
+			}
 		}
 
-		// -------------------------- Credit
-		if (col.name == "Credit") 
-		{
-			col.GetComponent<SpriteRenderer> ().DOFade (1, 0.2f);
-		}
-
-		// -------------------------- Title
-
-		if (col.name == "A" || col.name == "D" || col.name == "Space") 
-		{
-			Gudie._instance.guideProgress++;
-			Gudie._instance.ShowNewGuide ();
-		}
 	}
 
 	void OnCollisionStay2D(Collision2D collision)
 	{
-		if (collision.transform.tag == "Ground") 
+		if (!levelClear) 
 		{
-			var normal = collision.contacts[0].normal;
-			if (normal.y > 0) 
-			{ //if the bottom side hit something 
-				isFalling = false;
-				jumpTimer = 0;
-				curJumpSpeed = Vector2.zero;
-				//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+			if (collision.transform.tag == "Ground") 
+			{
+				var normal = collision.contacts[0].normal;
+				if (normal.y > 0) 
+				{ //if the bottom side hit something 
+					isFalling = false;
+					jumpTimer = 0;
+					curJumpSpeed = Vector2.zero;
+					//	collision.gameObject.GetComponent<BoxCollider2D>().enabled = true;
+				}
 			}
 		}
+
 
 	}
 
 	void OnCollisionExit2D(Collision2D collision)
 	{
-		if (collision.transform.name == "DeadBodies") 
+		if(!levelClear)
 		{
-			for (int i = 0; i < collision.transform.childCount; i++) 
+			if (collision.transform.name == "DeadBodies") 
 			{
-				if (!collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ()))
+				for (int i = 0; i < collision.transform.childCount; i++) 
 				{
-					canPush = false;
-					pushingList.Clear ();	
-				}	
+					if (!collision.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (this.transform.GetComponent<BoxCollider2D> ()))
+					{
+						canPush = false;
+						pushingList.Clear ();	
+					}	
+				}
+
+			}
+
+			if(collision.transform.tag == "Ground")
+			{
+				isFalling = true;	
 			}
 
 		}
 
-		if(collision.transform.tag == "Ground")
-		{
-			isFalling = true;	
-		}
 
 	}
 }

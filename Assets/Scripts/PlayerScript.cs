@@ -267,9 +267,8 @@ public class PlayerScript : MonoBehaviour
 		}
 		else
 		{
-			if (Input.GetKeyDown (KeyCode.Y)) 
+			if (Input.GetKeyDown (KeyCode.Space)) 
 			{
-				Debug.Log("yo");
 				if (SceneManager.GetSceneAt (0).buildIndex == SceneManager.sceneCountInBuildSettings - 1) 
 				{
 					SceneManager.LoadScene (0);

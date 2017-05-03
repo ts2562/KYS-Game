@@ -244,7 +244,7 @@ public class PlayerScript : MonoBehaviour
 					if (curJumpSpeed.y < maxJumpSpeed.y) 
 					{	
 						jumpTimer += Time.deltaTime * 120;
-						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer);
+						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer + 3.5f);
 						this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
 					}
 					else

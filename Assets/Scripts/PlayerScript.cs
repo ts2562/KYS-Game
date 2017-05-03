@@ -112,7 +112,7 @@ public class PlayerScript : MonoBehaviour
 		collideWithHazard = false;
 		canMove = true;
 		canPush = false;
-		isFalling = false;
+		isFalling = true;
 		canJump = false;
 		cameraFollow = true;
 		pushingList.Clear ();
@@ -244,8 +244,9 @@ public class PlayerScript : MonoBehaviour
 					if (curJumpSpeed.y < maxJumpSpeed.y) 
 					{	
 						jumpTimer += Time.deltaTime * 120;
-						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer + 3.5f);
-						this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
+						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer + 50.5f);
+						//this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
+						this.GetComponent<Rigidbody2D> ().AddForce(transform.up*100, ForceMode2D.Impulse);
 					}
 					else
 					{
@@ -267,6 +268,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		else
 		{
+			this.GetComponent<Animator>().Stop();
 			if (Input.GetKeyDown (KeyCode.Space)) 
 			{
 				if (SceneManager.GetSceneAt (0).buildIndex == SceneManager.sceneCountInBuildSettings - 1) 
@@ -425,7 +427,7 @@ public class PlayerScript : MonoBehaviour
 		}
 		if(cameraFollow)
 			Camera.main.transform.position = new Vector3 (camX, camY, -10);
-
+		//if(!levelClear) 
 		PlayAnimation ();
 
 	}

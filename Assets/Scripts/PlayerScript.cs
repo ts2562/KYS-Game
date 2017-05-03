@@ -54,7 +54,10 @@ public class PlayerScript : MonoBehaviour
 
 
 	private GameObject crush;
-	public AudioSource audio;
+	public AudioSource impaledSound;
+	public AudioSource freezeSound;
+	public AudioSource crushSound;
+	public AudioSource victoryCheer;
 	//Coroutine
 	private IEnumerator waitForRestart;	// no matter it is the first time of entering the level, or a restart of the level, must call this function to RESET data
 	private IEnumerator fadeOut;	// Only deal with the black mask
@@ -118,7 +121,7 @@ public class PlayerScript : MonoBehaviour
 		pushingList.Clear ();
 
 		levelClear = false;
-
+		Debug.Log(death);
 		for (int i = death; i < liveList.Length; i++) 	// dead boides back to the defual size and color
 		{
 			liveList [i].transform.position = startLife [i];
@@ -144,13 +147,14 @@ public class PlayerScript : MonoBehaviour
 	{
 		fadeOut = FadeOut();
 		StartCoroutine(fadeOut);
-
+		if(maxLives != 0){
 		for (int i = 0; i <= deadBodiesTr.childCount; i++)
 		{
 			liveList[i].transform.parent = lifeTr;
 			liveList[i].transform.position = startLife [i];
 
 		}
+	}
 		startPos = originalStartPos;
 
 		checkpoints = GameObject.FindGameObjectsWithTag("Checkpoint");
@@ -549,6 +553,7 @@ public class PlayerScript : MonoBehaviour
 	private void LevelClear()
 	{
 		//Debug.Log ("Die on the goal hazard");
+		victoryCheer.Play();
 		levelClear = true;
 		nextLevel.position = this.transform.position;
 		nextLevel.gameObject.SetActive(true);
@@ -605,7 +610,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
 			{
-				audio.Play();
+				freezeSound.Play();
 				Debug.Log("hi");
 				collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
 				Death (collision.transform.GetChild(0).gameObject);
@@ -613,6 +618,7 @@ public class PlayerScript : MonoBehaviour
 
 			if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
 			{
+				//victoryCheer.Play();
 				collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 				LevelClear ();
 			}
@@ -623,7 +629,7 @@ public class PlayerScript : MonoBehaviour
 				if (normal.y < 0)
 				{ //if player's top side hits something 
 
-					audio.Play();
+					crushSound.Play();
 					//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
 					//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
 					Death (collision.gameObject);
@@ -683,6 +689,7 @@ public class PlayerScript : MonoBehaviour
 		
 		if (col.transform.tag == "GoalHazard" && this.tag == "Alive") 
 		{
+			victoryCheer.Play();
 			col.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
 			LevelClear ();
 		}
@@ -694,7 +701,7 @@ public class PlayerScript : MonoBehaviour
 			if(col.transform.parent != null && col.transform.parent.name == "Spikes")
 			{
 				//Destroy(col.gameObject);
-				audio.Play();
+				impaledSound.Play();
 				//StartCoroutine (waitSeconds (2.0f));
 
 				Death (col.gameObject);

@@ -8,6 +8,7 @@ public class DeadBodies : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
+		//Debug.Log("fdsfdsfdsfdsf");
 		player = GameObject.Find ("Player").GetComponent<PlayerScript> ();
 	}
 

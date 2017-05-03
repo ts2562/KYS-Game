@@ -86,7 +86,7 @@ public class PlayerScript : MonoBehaviour
 		pushingList = new List<GameObject>();
 		startLife = new Vector3[maxLives];
 		lifeJumping = new bool[maxLives];
-		maxJumpSpeed = new Vector2 (0, 30);
+		maxJumpSpeed = new Vector2 (0, 40);
 
 		//correction = new Vector3(0f,1.85f,0f);
 		death = 0;
@@ -244,9 +244,9 @@ public class PlayerScript : MonoBehaviour
 					if (curJumpSpeed.y < maxJumpSpeed.y) 
 					{	
 						jumpTimer += Time.deltaTime * 120;
-						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer + 50.5f);
-						//this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
-						this.GetComponent<Rigidbody2D> ().AddForce(transform.up*100, ForceMode2D.Impulse);
+						curJumpSpeed = new Vector2 (0, curjumpHeight * jumpTimer * 2 + 5f);
+						this.GetComponent<Rigidbody2D> ().velocity = curJumpSpeed;
+						//this.GetComponent<Rigidbody2D> ().AddForce(transform.up*100, ForceMode2D.Impulse);
 					}
 					else
 					{

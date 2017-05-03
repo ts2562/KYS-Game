@@ -66,7 +66,7 @@ public class DeadBodies : MonoBehaviour
 			for (int i = 0; i < this.transform.childCount; i++) 
 			{
 
-				if (this.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (_col.collider)) 
+				if (!this.transform.GetChild (i).GetComponent<BoxCollider2D> ().IsTouching (_col.collider)) 
 				{
 					Debug.Log (this.transform.GetChild(i).transform.name);
 					this.transform.GetChild (i).transform.name = "Life";

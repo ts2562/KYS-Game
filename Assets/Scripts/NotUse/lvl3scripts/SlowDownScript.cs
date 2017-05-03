@@ -24,7 +24,7 @@ public class SlowDownScript : MonoBehaviour {
 	void OnTriggerEnter2D(Collider2D col){
 		if(col.gameObject.name == "Player"){
 			//playerScript.speed = 26.0f;
-			GameObject.Find("Player").GetComponent<PlayerScript>().speed = 15.0f;
+			//GameObject.Find("Player").GetComponent<PlayerScript>().speed = 15.0f;
 			Debug.Log ("2");
 		}
 }

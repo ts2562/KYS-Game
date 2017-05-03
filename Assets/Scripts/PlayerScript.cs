@@ -19,7 +19,7 @@ public class PlayerScript : MonoBehaviour
 	public int maxLives;
 
 	//Basic Movement
-	public float speed = 40.0f;
+	private float speed = 15.0f;
 	public Vector2 curJumpSpeed;
 	private Vector2 maxJumpSpeed;
 	private float curjumpHeight;
@@ -168,6 +168,7 @@ public class PlayerScript : MonoBehaviour
 	void Update () 
 	{
 		//Dev Cheat
+		Debug.Log(levelClear);
 
 		if (!levelClear) 
 		{
@@ -193,7 +194,7 @@ public class PlayerScript : MonoBehaviour
 								//	pushingList[i].transform.position.y, 0);
 								//	pushingList[i].GetComponent<Rigidbody2D>().velocity = new Vector2(-1, 0);
 								pushingList[i].transform.position += Vector3.left * speed * 0.03f;
-								//							Debug.Log (pushingList[i].transform.position);
+								//				
 							}
 						}
 
@@ -268,6 +269,7 @@ public class PlayerScript : MonoBehaviour
 		{
 			if (Input.GetKeyDown (KeyCode.Y)) 
 			{
+				Debug.Log("yo");
 				if (SceneManager.GetSceneAt (0).buildIndex == SceneManager.sceneCountInBuildSettings - 1) 
 				{
 					SceneManager.LoadScene (0);
@@ -483,7 +485,7 @@ public class PlayerScript : MonoBehaviour
 			yield return null;
 		}
 		transform.eulerAngles = new Vector3(transform.eulerAngles.x, transform.eulerAngles.y, 0);
-		Debug.Log(death %maxLives);
+		//Debug.Log(death %maxLives);
 		int i = death -1;
 
 		if (i >= 0) {
@@ -545,7 +547,7 @@ public class PlayerScript : MonoBehaviour
 
 	private void LevelClear()
 	{
-		Debug.Log ("Die on the goal hazard");
+		//Debug.Log ("Die on the goal hazard");
 		levelClear = true;
 		nextLevel.position = this.transform.position;
 		nextLevel.gameObject.SetActive(true);
@@ -585,16 +587,40 @@ public class PlayerScript : MonoBehaviour
 
 	void OnCollisionEnter2D(Collision2D collision)
 	{
-//		Debug.Log(collision.transform.name);
+		//Debug.Log(collision.transform.name);
 
-		if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
-		{
-			collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
-			LevelClear ();
-		}
 
-		if (levelClear)
+
+		if (!levelClear)
 		{
+			if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
+			{
+				audio.Play();
+				Debug.Log("hi");
+				collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
+				Death (collision.transform.GetChild(0).gameObject);
+			}
+
+			if (collision.transform.tag == "GoalHazard" && this.tag == "Alive") 
+			{
+				collision.transform.GetComponent<SpriteRenderer> ().color = new Color32 (0, 0, 0, 255);
+				LevelClear ();
+			}
+
+			else if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
+			{
+				var normal =  collision.contacts[0].normal;
+				if (normal.y < 0)
+				{ //if player's top side hits something 
+
+					audio.Play();
+					//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
+					//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
+					Death (collision.gameObject);
+					//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
+				} 
+			}
+
 			if (collision.transform.tag == "Ground") 
 			{
 				var normal = collision.contacts[0].normal;
@@ -632,27 +658,8 @@ public class PlayerScript : MonoBehaviour
 
 			}
 
-			if (collision.transform.parent != null && collision.transform.parent.name == "CrushingRects") 
-			{
-				var normal =  collision.contacts[0].normal;
-				if (normal.y < 0)
-				{ //if player's top side hits something 
 
-					audio.Play();
-					//	collision.transform.GetComponent<CrushingRect> ().PauseDoMove ();
-					//	collision.transform.GetComponent<CrushingRect> ().GoBack ();
-					Death (collision.gameObject);
-					//	collision.transform.GetComponent<CrushingRect> ().UpdateFallingDistance(collision.transform.position.y);  
-				} 
-			}
-
-			if (collision.transform.parent != null && collision.transform.parent.name == "IceBallBases") 
-			{
-				audio.Play();
-
-				collision.transform.GetComponent<IceBall> ().PauseTween (collision.transform);
-				Death (collision.transform.GetChild(0).gameObject);
-			}
+			//Debug.Log(collision.transform.parent.name);
 
 
 			

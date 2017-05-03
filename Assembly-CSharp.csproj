@@ -77,6 +77,9 @@
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween43.xml" />
      <None Include="Assets\Shader\Effect_1.shader" />
      <None Include="Assets\Scripts\Demigiant\DOTween\DOTween50.xml" />
+ <Reference Include="UnityEngine.Advertisements">
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/Advertisements/UnityEngine.Advertisements.dll</HintPath>
+ </Reference>
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
  </Reference>
@@ -91,6 +94,9 @@
  </Reference>
  <Reference Include="UnityEngine.HoloLens">
  <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityHoloLens/RuntimeEditor/UnityEngine.HoloLens.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEngine.Purchasing">
+ <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityPurchasing/UnityEngine.Purchasing.dll</HintPath>
  </Reference>
  <Reference Include="UnityEngine.VR">
  <HintPath>C:/MyFiles/Unity/Unity5.5.0/Editor/Data/UnityExtensions/Unity/UnityVR/RuntimeEditor/UnityEngine.VR.dll</HintPath>

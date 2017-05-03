@@ -559,7 +559,9 @@ public class PlayerScript : MonoBehaviour
 
 	private void Death(GameObject _go)			// No matter colliders which kinds of hazards, must call this function to creat a dead body
 	{
+
 		//this.GetComponent<SpriteRenderer>().color = col.gameObject.GetComponent<SpriteRenderer>().color;
+		if(maxLives != 0){
 		if(!collideWithHazard)
 		{					
 			liveList[death % maxLives].GetComponent<SpriteRenderer>().color = _go.GetComponent<SpriteRenderer>().color;
@@ -583,6 +585,13 @@ public class PlayerScript : MonoBehaviour
 				death++;
 			}
 		}
+		}
+		else {
+			tag = "Dead";
+			this.GetComponent<BoxCollider2D>().isTrigger = true;
+			restartLevel = true;
+			RestartLevel ();
+		} 
 
 	}
 
